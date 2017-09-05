@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <!-- TODO: change icons to weather stuff -->
+        <item
+            android:id="@+id/nav_favorite_location1"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="Cluj-Napoca" />
+        <item
+            android:id="@+id/nav_favorite_location2"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Bucuresti" />
+        <item
+            android:id="@+id/nav_favorite_location3"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="New-York" />
+
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="Settings" />
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/nav_help_about"
+                android:icon="@drawable/ic_menu_slideshow"
+                android:title="Help and About" />
+        </menu>
+    </item>
+
+</menu>
