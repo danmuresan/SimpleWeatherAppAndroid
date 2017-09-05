@@ -16,19 +16,19 @@ public class WeatherForecastDto {
         this.mWeatherForecastList = mWeatherForecastList;
     }
 
-    public LocationDto getmLocation() {
+    public LocationDto getLocation() {
         return mLocation;
     }
 
-    public void setmLocation(LocationDto mLocation) {
+    public void setLocation(LocationDto mLocation) {
         this.mLocation = mLocation;
     }
 
-    public ArrayList<CurrentWeatherDto> getmWeatherForecastList() {
+    public ArrayList<CurrentWeatherDto> getWeatherForecastList() {
         return mWeatherForecastList;
     }
 
-    public void setmWeatherForecastList(ArrayList<CurrentWeatherDto> mWeatherForecastList) {
+    public void setWeatherForecastList(ArrayList<CurrentWeatherDto> mWeatherForecastList) {
         this.mWeatherForecastList = mWeatherForecastList;
     }
 }

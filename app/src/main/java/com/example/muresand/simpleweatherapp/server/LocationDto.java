@@ -25,43 +25,43 @@ public class LocationDto {
         this.mLongitude = longitude;
     }
 
-    public String getmCityName() {
+    public String getCityName() {
         return mCityName;
     }
 
-    public void setmCityName(String mCityName) {
+    public void setCityName(String mCityName) {
         this.mCityName = mCityName;
     }
 
-    public String getmCountry() {
+    public String getCountry() {
         return mCountry;
     }
 
-    public void setmCountry(String mCountry) {
+    public void setCountry(String mCountry) {
         this.mCountry = mCountry;
     }
 
-    public long getmCityId() {
+    public long getCityId() {
         return mCityId;
     }
 
-    public void setmCityId(long mCityId) {
+    public void setCityId(long mCityId) {
         this.mCityId = mCityId;
     }
 
-    public double getmLatitude() {
+    public double getLatitude() {
         return mLatitude;
     }
 
-    public void setmLatitude(double mLatitude) {
+    public void setLatitude(double mLatitude) {
         this.mLatitude = mLatitude;
     }
 
-    public double getmLongitude() {
+    public double getLongitude() {
         return mLongitude;
     }
 
-    public void setmLongitude(double mLongitude) {
+    public void setLongitude(double mLongitude) {
         this.mLongitude = mLongitude;
     }
 }

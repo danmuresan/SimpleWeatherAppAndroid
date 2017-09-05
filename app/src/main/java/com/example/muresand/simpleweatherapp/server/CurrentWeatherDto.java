@@ -39,91 +39,91 @@ public class CurrentWeatherDto {
         this.mDate = mDate;
     }
 
-    public LocationDto getmLocation() {
+    public LocationDto getLocation() {
         return mLocation;
     }
 
-    public void setmLocation(LocationDto mLocation) {
+    public void setLocation(LocationDto mLocation) {
         this.mLocation = mLocation;
     }
 
-    public String getmWeatherMain() {
+    public String getWeatherMain() {
         return mWeatherMain;
     }
 
-    public void setmWeatherMain(String mWeatherMain) {
+    public void setWeatherMain(String mWeatherMain) {
         this.mWeatherMain = mWeatherMain;
     }
 
-    public String getmWeatherDescription() {
+    public String getWeatherDescription() {
         return mWeatherDescription;
     }
 
-    public void setmWeatherDescription(String mWeatherDescription) {
+    public void setWeatherDescription(String mWeatherDescription) {
         this.mWeatherDescription = mWeatherDescription;
     }
 
-    public String getmWeatherIcon() {
+    public String getWeatherIcon() {
         return mWeatherIcon;
     }
 
-    public void setmWeatherIcon(String mWeatherIcon) {
+    public void setWeatherIcon(String mWeatherIcon) {
         this.mWeatherIcon = mWeatherIcon;
     }
 
-    public double getmTemperature() {
+    public double getTemperature() {
         return mTemperature;
     }
 
-    public void setmTemperature(double mTemperature) {
+    public void setTemperature(double mTemperature) {
         this.mTemperature = mTemperature;
     }
 
-    public int getmHumidity() {
+    public int getHumidity() {
         return mHumidity;
     }
 
-    public void setmHumidity(int mHumidity) {
+    public void setHumidity(int mHumidity) {
         this.mHumidity = mHumidity;
     }
 
-    public double getmMinTemperature() {
+    public double getMinTemperature() {
         return mMinTemperature;
     }
 
-    public void setmMinTemperature(double mMinTemperature) {
+    public void setMinTemperature(double mMinTemperature) {
         this.mMinTemperature = mMinTemperature;
     }
 
-    public double getmMaxTemperature() {
+    public double getMaxTemperature() {
         return mMaxTemperature;
     }
 
-    public void setmMaxTemperature(double mMaxTemperature) {
+    public void setMaxTemperature(double mMaxTemperature) {
         this.mMaxTemperature = mMaxTemperature;
     }
 
-    public double getmPressure() {
+    public double getPressure() {
         return mPressure;
     }
 
-    public void setmPressure(double mPressure) {
+    public void setPressure(double mPressure) {
         this.mPressure = mPressure;
     }
 
-    public int getmCloudiness() {
+    public int getCloudiness() {
         return mCloudiness;
     }
 
-    public void setmCloudiness(int mCloudiness) {
+    public void setCloudiness(int mCloudiness) {
         this.mCloudiness = mCloudiness;
     }
 
-    public Date getmDate() {
+    public Date getDate() {
         return mDate;
     }
 
-    public void setmDate(Date mDate) {
+    public void setDate(Date mDate) {
         this.mDate = mDate;
     }
 }
