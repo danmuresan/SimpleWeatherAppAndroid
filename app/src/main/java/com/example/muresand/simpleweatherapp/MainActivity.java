@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.muresand.simpleweatherapp.server.CurrentWeatherDto;
@@ -25,6 +26,13 @@ public class MainActivity extends AppCompatActivity
     private WeatherServiceManager mWeatherServiceManager;
 
     private TextView mHelloWorldText;
+
+    private TextView mTemperatureTextView;
+    private TextView mCityTextView;
+    private TextView mWeatherDescriptionTextView;
+    private TextView mWeatherUpdatedDateTimeDescription;
+    private TextView mUnitOfMeasurementTextView;
+    private ImageView mWeatherIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
