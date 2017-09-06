@@ -2,35 +2,43 @@ package com.example.muresand.simpleweatherapp.server;
 
 import android.location.Location;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by muresand on 9/5/2017.
  */
 
 public class LocationDto {
 
-    private String mCityName;
+    @SerializedName("type")
+    private int mType;
+
+    @SerializedName("country")
     private String mCountry;
-    private long mCityId;
-    private double mLatitude;
-    private double mLongitude;
 
-    public LocationDto() {
+    @SerializedName("id")
+    private long mId;
+
+    @SerializedName("sunrise")
+    private long mSunrise;
+
+    @SerializedName("sunset")
+    private long mSunset;
+
+    public LocationDto(int mType, String mCountry, long mId, long mSunrise, long mSunset) {
+        this.mType = mType;
+        this.mCountry = mCountry;
+        this.mId = mId;
+        this.mSunrise = mSunrise;
+        this.mSunset = mSunset;
     }
 
-    public LocationDto(String cityName, String country, long cityId, double latitude, double longitude) {
-        this.mCityName = cityName;
-        this.mCountry = country;
-        this.mCityId = cityId;
-        this.mLatitude = latitude;
-        this.mLongitude = longitude;
+    public int getType() {
+        return mType;
     }
 
-    public String getCityName() {
-        return mCityName;
-    }
-
-    public void setCityName(String mCityName) {
-        this.mCityName = mCityName;
+    public void setType(int mType) {
+        this.mType = mType;
     }
 
     public String getCountry() {
@@ -41,27 +49,27 @@ public class LocationDto {
         this.mCountry = mCountry;
     }
 
-    public long getCityId() {
-        return mCityId;
+    public long getId() {
+        return mId;
     }
 
-    public void setCityId(long mCityId) {
-        this.mCityId = mCityId;
+    public void setId(long mId) {
+        this.mId = mId;
     }
 
-    public double getLatitude() {
-        return mLatitude;
+    public long getSunrise() {
+        return mSunrise;
     }
 
-    public void setLatitude(double mLatitude) {
-        this.mLatitude = mLatitude;
+    public void setSunrise(long mSunrise) {
+        this.mSunrise = mSunrise;
     }
 
-    public double getLongitude() {
-        return mLongitude;
+    public long getSunset() {
+        return mSunset;
     }
 
-    public void setLongitude(double mLongitude) {
-        this.mLongitude = mLongitude;
+    public void setSunset(long mSunset) {
+        this.mSunset = mSunset;
     }
 }

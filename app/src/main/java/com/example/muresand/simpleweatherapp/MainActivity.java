@@ -7,11 +7,24 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+
+import com.example.muresand.simpleweatherapp.server.CurrentWeatherDto;
+import com.example.muresand.simpleweatherapp.server.WeatherApiResponseCallback;
+import com.example.muresand.simpleweatherapp.server.WeatherServiceManager;
+import com.example.muresand.simpleweatherapp.server.WeatherServiceManagerImpl;
+import com.example.muresand.simpleweatherapp.util.Constants;
+import com.example.muresand.simpleweatherapp.util.UnitOfMeasurement;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private WeatherServiceManager mWeatherServiceManager;
+
+    private TextView mHelloWorldText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +41,27 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        mWeatherServiceManager = new WeatherServiceManagerImpl();
+        mHelloWorldText = (TextView) findViewById(R.id.helloWorldTextView);
+
+        try {
+            mWeatherServiceManager.getCurrentWeatherByCoordinates(46.771210, 23.623635, Constants.AppId, UnitOfMeasurement.METRIC.getName(), new WeatherApiResponseCallback<CurrentWeatherDto>() {
+                @Override
+                public void onSuccess(CurrentWeatherDto responseDto) {
+                    mHelloWorldText.setText(responseDto.getMainWeatherMetrics().getMinTemperature() + " degrees Celsius in Cluj-Napoca");
+                }
+
+                @Override
+                public void onError(String message, int errorCode) {
+                    mHelloWorldText.setText(String.format("Network call failed with message: %s (code: %d)", message, errorCode));
+                }
+            });
+
+        } catch (Exception ex) {
+            Log.e("MAIN_ACTIVITY", ex.getMessage());
+        }
+
     }
 
     @Override

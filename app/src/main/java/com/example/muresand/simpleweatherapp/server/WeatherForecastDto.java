@@ -6,10 +6,13 @@ import java.util.ArrayList;
  * Created by muresand on 9/5/2017.
  */
 
-public class WeatherForecastDto {
+public class WeatherForecastDto implements WeatherResponseMarker {
 
     private LocationDto mLocation;
     private ArrayList<CurrentWeatherDto> mWeatherForecastList;
+
+    public WeatherForecastDto() {
+    }
 
     public WeatherForecastDto(LocationDto mLocation, ArrayList<CurrentWeatherDto> mWeatherForecastList) {
         this.mLocation = mLocation;

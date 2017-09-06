@@ -1,129 +1,126 @@
 package com.example.muresand.simpleweatherapp.server;
 
-import java.util.Date;
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 /**
  * Created by muresand on 9/5/2017.
  */
 
-public class CurrentWeatherDto {
+public class CurrentWeatherDto implements WeatherResponseMarker {
 
-    private LocationDto mLocation;
-    private String mWeatherMain;
-    private String mWeatherDescription;
-    private String mWeatherIcon;
-    private double mTemperature;
-    private int mHumidity;
-    private double mMinTemperature;
-    private double mMaxTemperature;
-    private double mPressure;
-    private int mCloudiness;
-    private Date mDate;
+    @SerializedName("coord")
+    private CoordinatesDto mCoordinates;
 
-    public CurrentWeatherDto() {
-    }
+    @SerializedName("weather")
+    private List<WeatherDto> mWeather;
 
-    public CurrentWeatherDto(LocationDto mLocation, String mWeatherMain, String mWeatherDescription,
-                             String mWeatherIcon, double mTemperature, int mHumidity, double mMinTemperature,
-                             double mMaxTemperature, double mPressure, int mCloudiness, Date mDate) {
-        this.mLocation = mLocation;
-        this.mWeatherMain = mWeatherMain;
-        this.mWeatherDescription = mWeatherDescription;
-        this.mWeatherIcon = mWeatherIcon;
-        this.mTemperature = mTemperature;
-        this.mHumidity = mHumidity;
-        this.mMinTemperature = mMinTemperature;
-        this.mMaxTemperature = mMaxTemperature;
-        this.mPressure = mPressure;
-        this.mCloudiness = mCloudiness;
+    @SerializedName("base")
+    private String mBase;
+
+    @SerializedName("main")
+    private WeatherDetailedMetricsDto mMainWeatherMetrics;
+
+    @SerializedName("id")
+    private long mId;
+
+    @SerializedName("name")
+    private String mName;
+
+    @SerializedName("cod")
+    private int mCode;
+
+    @SerializedName("dt")
+    private long mDate;
+
+    @SerializedName("sys")
+    private LocationDto mLocationInfo;
+
+    public CurrentWeatherDto(CoordinatesDto mCoordinates, List<WeatherDto> mWeather,
+                             String mStations, WeatherDetailedMetricsDto mMainWeatherMetrics,
+                             long mId, String mName, int mCode,
+                             long mDate, LocationDto mLocationInfo) {
+        this.mCoordinates = mCoordinates;
+        this.mWeather = mWeather;
+        this.mBase = mStations;
+        this.mMainWeatherMetrics = mMainWeatherMetrics;
+        this.mId = mId;
+        this.mName = mName;
+        this.mCode = mCode;
         this.mDate = mDate;
+        this.mLocationInfo = mLocationInfo;
     }
 
-    public LocationDto getLocation() {
-        return mLocation;
+    public CoordinatesDto getCoordinates() {
+        return mCoordinates;
     }
 
-    public void setLocation(LocationDto mLocation) {
-        this.mLocation = mLocation;
+    public void setCoordinates(CoordinatesDto mCoordinates) {
+        this.mCoordinates = mCoordinates;
     }
 
-    public String getWeatherMain() {
-        return mWeatherMain;
+    public List<WeatherDto> getWeather() {
+        return mWeather;
     }
 
-    public void setWeatherMain(String mWeatherMain) {
-        this.mWeatherMain = mWeatherMain;
+    public void setWeather(List<WeatherDto> mWeather) {
+        this.mWeather = mWeather;
     }
 
-    public String getWeatherDescription() {
-        return mWeatherDescription;
+    public String getBase() {
+        return mBase;
     }
 
-    public void setWeatherDescription(String mWeatherDescription) {
-        this.mWeatherDescription = mWeatherDescription;
+    public void setBase(String base) {
+        this.mBase = base;
     }
 
-    public String getWeatherIcon() {
-        return mWeatherIcon;
+    public WeatherDetailedMetricsDto getMainWeatherMetrics() {
+        return mMainWeatherMetrics;
     }
 
-    public void setWeatherIcon(String mWeatherIcon) {
-        this.mWeatherIcon = mWeatherIcon;
+    public void setMainWeatherMetrics(WeatherDetailedMetricsDto mMainWeatherMetrics) {
+        this.mMainWeatherMetrics = mMainWeatherMetrics;
     }
 
-    public double getTemperature() {
-        return mTemperature;
+    public long getId() {
+        return mId;
     }
 
-    public void setTemperature(double mTemperature) {
-        this.mTemperature = mTemperature;
+    public void setId(long mId) {
+        this.mId = mId;
     }
 
-    public int getHumidity() {
-        return mHumidity;
+    public String getName() {
+        return mName;
     }
 
-    public void setHumidity(int mHumidity) {
-        this.mHumidity = mHumidity;
+    public void setName(String mName) {
+        this.mName = mName;
     }
 
-    public double getMinTemperature() {
-        return mMinTemperature;
+    public int getCode() {
+        return mCode;
     }
 
-    public void setMinTemperature(double mMinTemperature) {
-        this.mMinTemperature = mMinTemperature;
+    public void setCode(int mCode) {
+        this.mCode = mCode;
     }
 
-    public double getMaxTemperature() {
-        return mMaxTemperature;
-    }
-
-    public void setMaxTemperature(double mMaxTemperature) {
-        this.mMaxTemperature = mMaxTemperature;
-    }
-
-    public double getPressure() {
-        return mPressure;
-    }
-
-    public void setPressure(double mPressure) {
-        this.mPressure = mPressure;
-    }
-
-    public int getCloudiness() {
-        return mCloudiness;
-    }
-
-    public void setCloudiness(int mCloudiness) {
-        this.mCloudiness = mCloudiness;
-    }
-
-    public Date getDate() {
+    public long getDate() {
         return mDate;
     }
 
-    public void setDate(Date mDate) {
+    public void setDate(long mDate) {
         this.mDate = mDate;
+    }
+
+    public LocationDto getLocationInfo() {
+        return mLocationInfo;
+    }
+
+    public void setLocationInfo(LocationDto mLocationInfo) {
+        this.mLocationInfo = mLocationInfo;
     }
 }
