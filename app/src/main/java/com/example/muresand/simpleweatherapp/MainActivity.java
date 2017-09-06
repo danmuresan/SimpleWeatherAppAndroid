@@ -10,7 +10,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.muresand.simpleweatherapp.server.CurrentWeatherDto;
@@ -20,13 +23,14 @@ import com.example.muresand.simpleweatherapp.server.WeatherServiceManagerImpl;
 import com.example.muresand.simpleweatherapp.util.Constants;
 import com.example.muresand.simpleweatherapp.util.UnitOfMeasurement;
 
+import org.w3c.dom.Text;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private WeatherServiceManager mWeatherServiceManager;
 
-    private TextView mHelloWorldText;
-
+    private ProgressBar mainProgressSpinner;
     private TextView mTemperatureTextView;
     private TextView mCityTextView;
     private TextView mWeatherDescriptionTextView;
@@ -51,25 +55,42 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         mWeatherServiceManager = new WeatherServiceManagerImpl();
-        mHelloWorldText = (TextView) findViewById(R.id.helloWorldTextView);
+
+        // get items
+        mainProgressSpinner = (ProgressBar) findViewById(R.id.mainProgressSpinner);
+        mCityTextView = (TextView) findViewById(R.id.cityTextView);
+        mTemperatureTextView = (TextView) findViewById(R.id.temperatureTextView);
+        mWeatherUpdatedDateTimeDescription = (TextView) findViewById(R.id.weatherUpdateDateTimeTextView);
+        mUnitOfMeasurementTextView = (TextView) findViewById(R.id.degreesTextView);
+        mWeatherDescriptionTextView = (TextView) findViewById(R.id.weatherDescriptionTextView);
+        mWeatherIcon = (ImageView) findViewById(R.id.weatherIcon);
+
+        // start up the spinner
+        mainProgressSpinner.setVisibility(View.VISIBLE);
 
         try {
             mWeatherServiceManager.getCurrentWeatherByCoordinates(46.771210, 23.623635, Constants.AppId, UnitOfMeasurement.METRIC.getName(), new WeatherApiResponseCallback<CurrentWeatherDto>() {
                 @Override
                 public void onSuccess(CurrentWeatherDto responseDto) {
-                    mHelloWorldText.setText(responseDto.getMainWeatherMetrics().getMinTemperature() + " degrees Celsius in Cluj-Napoca");
+
+
+                    mCityTextView.setText(responseDto.getLocationInfo().getCountry());
+                    mTemperatureTextView.setText(Double.toString(responseDto.getMainWeatherMetrics().getTempMain()));
+                    mainProgressSpinner.setVisibility(View.GONE);
                 }
 
                 @Override
                 public void onError(String message, int errorCode) {
-                    mHelloWorldText.setText(String.format("Network call failed with message: %s (code: %d)", message, errorCode));
+
+                    mCityTextView.setText(String.format("Network call failed with message: %s (code: %d)", message, errorCode));
+
+                    mainProgressSpinner.setVisibility(View.GONE);
                 }
             });
 
         } catch (Exception ex) {
             Log.e("MAIN_ACTIVITY", ex.getMessage());
         }
-
     }
 
     @Override
