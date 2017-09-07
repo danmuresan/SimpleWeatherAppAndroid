@@ -18,12 +18,17 @@ import android.widget.TextView;
 
 import com.example.muresand.simpleweatherapp.server.CurrentWeatherDto;
 import com.example.muresand.simpleweatherapp.server.WeatherApiResponseCallback;
+import com.example.muresand.simpleweatherapp.server.WeatherDto;
 import com.example.muresand.simpleweatherapp.server.WeatherServiceManager;
 import com.example.muresand.simpleweatherapp.server.WeatherServiceManagerImpl;
 import com.example.muresand.simpleweatherapp.util.Constants;
+import com.example.muresand.simpleweatherapp.util.DownloadImageAsyncTask;
 import com.example.muresand.simpleweatherapp.util.UnitOfMeasurement;
 
 import org.w3c.dom.Text;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -73,9 +78,22 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onSuccess(CurrentWeatherDto responseDto) {
 
+                    WeatherDto weatherDescription = responseDto.getWeather().get(0);
+                    SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+                    try {
+                        Date weatherUpdatedDate = dt.parse(new Date(responseDto.getDate() * 1000).toString());
+                        mWeatherUpdatedDateTimeDescription.setText(weatherUpdatedDate.toString());
+                    }
+                    catch (Exception ex) {
+                        Log.d("MAIN ACTIVITY", "Couldn't set weather updated date!");
+                    }
 
                     mCityTextView.setText(responseDto.getLocationInfo().getCountry());
-                    mTemperatureTextView.setText(Double.toString(responseDto.getMainWeatherMetrics().getTempMain()));
+                    mTemperatureTextView.setText(Double.toString(responseDto.getMainWeatherMetrics().getTempMain()) + (char) 0x00B0);
+                    mWeatherDescriptionTextView.setText(weatherDescription.getDescription());
+                    updateWeatherIcon(weatherDescription.getIcon());
+
                     mainProgressSpinner.setVisibility(View.GONE);
                 }
 
@@ -148,5 +166,10 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void updateWeatherIcon(String imageName) {
+        final String fullImageUrl = String.format(Constants.ImageForWeatherUri, imageName);
+        new DownloadImageAsyncTask((ImageView) findViewById(R.id.weatherIcon)).execute(fullImageUrl);
     }
 }
