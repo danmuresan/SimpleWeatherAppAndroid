@@ -5,4 +5,95 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="title_activity_settings">Weather Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_auto_detect_location">Auto-Detect Location</string>
+    <string name="pref_description_auto_detect_location">Allow GPS to auto-detect where
+        your current location is
+    </string>
+
+    <string name="pref_title_animations_enabled">Animations Enabled</string>
+    <string name="pref_description_animations_enabled">Enable weather icon animation
+    </string>
+
+    <string name="pref_title_manual_location">Manual Location</string>
+    <string name="pref_default_manual_location">Cluj-Napoca, RO</string>
+
+    <string name="pref_title_unit_of_measurement">Unit Of Measurement</string>
+    <string-array name="pref_unit_of_measurement_list_titles">
+        <item>Metric</item>
+        <item>Imperial</item>
+        <item>Standard</item>
+    </string-array>
+    <string-array name="pref_unit_of_measurement_list_values">
+        <item>-1</item>
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+    <string name="pref_title_number_of_days_forecast">Number Of Days In Forecast</string>
+    <string-array name="pref_number_of_days_forecast_list_titles">
+        <item>5</item>
+        <item>8</item>
+        <item>12</item>
+    </string-array>
+    <string-array name="pref_number_of_days_forecast_list_values">
+        <item>5</item>
+        <item>8</item>
+        <item>12</item>
+    </string-array>
+
+    <!-- Example settings for Data & Sync -->
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <string name="pref_title_sync_frequency">Sync frequency</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>15 minutes</item>
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_sync_frequency_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>180</item>
+        <item>360</item>
+        <item>-1</item>
+    </string-array>
+
+    <string-array name="list_preference_entries">
+        <item>Entry 1</item>
+        <item>Entry 2</item>
+        <item>Entry 3</item>
+    </string-array>
+
+    <string-array name="list_preference_entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="multi_select_list_preference_default_value" />
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">Notifications</string>
+
+    <string name="pref_title_weather_updates_notifications">Enable Weather Notifications</string>
+    <string name="pref_description_weather_updates_notifications">Allow weather updates in the background
+        and notifications when significant updates occur</string>
+
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+
+    <string name="pref_title_vibrate">Vibrate</string>
 </resources>

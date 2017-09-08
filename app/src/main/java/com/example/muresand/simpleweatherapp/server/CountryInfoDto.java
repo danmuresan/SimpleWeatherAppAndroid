@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by muresand on 9/5/2017.
  */
 
-public class LocationDto {
+public class CountryInfoDto {
 
     @SerializedName("type")
     private int mType;
@@ -25,7 +25,7 @@ public class LocationDto {
     @SerializedName("sunset")
     private long mSunset;
 
-    public LocationDto(int mType, String mCountry, long mId, long mSunrise, long mSunset) {
+    public CountryInfoDto(int mType, String mCountry, long mId, long mSunrise, long mSunset) {
         this.mType = mType;
         this.mCountry = mCountry;
         this.mId = mId;

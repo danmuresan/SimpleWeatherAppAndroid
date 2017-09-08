@@ -1,0 +1,46 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="auto_detect_location_switch"
+        android:summary="@string/pref_description_auto_detect_location"
+        android:title="@string/pref_title_auto_detect_location" />
+
+    <!-- NOTE: EditTextPreference accepts EditText attributes. -->
+    <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
+    <PreferenceScreen
+        android:key="manual_location_selector_screen"
+        android:capitalize="words"
+        android:defaultValue="@string/pref_default_manual_location"
+        android:title="@string/pref_title_manual_location"
+        android:summary="@string/pref_default_manual_location"
+        android:fragment="com.example.muresand.simpleweatherapp.SettingsActivity$ManualLocationSelectorPreferenceFragment"/>
+
+    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
+         dismiss it. -->
+    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+    <ListPreference
+        android:defaultValue="-1"
+        android:entries="@array/pref_unit_of_measurement_list_titles"
+        android:entryValues="@array/pref_unit_of_measurement_list_values"
+        android:key="unit_of_measurement_list"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_unit_of_measurement" />
+
+    <ListPreference
+        android:defaultValue="-1"
+        android:entries="@array/pref_number_of_days_forecast_list_titles"
+        android:entryValues="@array/pref_number_of_days_forecast_list_values"
+        android:key="number_of_days_forecast_list"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_number_of_days_forecast" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="animations_enabled_switch"
+        android:summary="@string/pref_description_animations_enabled"
+        android:title="@string/pref_title_animations_enabled" />
+
+</PreferenceScreen>

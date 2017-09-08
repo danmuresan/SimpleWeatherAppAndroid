@@ -35,12 +35,12 @@ public class CurrentWeatherDto implements WeatherResponseMarker {
     private long mDate;
 
     @SerializedName("sys")
-    private LocationDto mLocationInfo;
+    private CountryInfoDto mLocationInfo;
 
     public CurrentWeatherDto(CoordinatesDto mCoordinates, List<WeatherDto> mWeather,
                              String mStations, WeatherDetailedMetricsDto mMainWeatherMetrics,
                              long mId, String mName, int mCode,
-                             long mDate, LocationDto mLocationInfo) {
+                             long mDate, CountryInfoDto mLocationInfo) {
         this.mCoordinates = mCoordinates;
         this.mWeather = mWeather;
         this.mBase = mStations;
@@ -116,11 +116,11 @@ public class CurrentWeatherDto implements WeatherResponseMarker {
         this.mDate = mDate;
     }
 
-    public LocationDto getLocationInfo() {
+    public CountryInfoDto getLocationInfo() {
         return mLocationInfo;
     }
 
-    public void setLocationInfo(LocationDto mLocationInfo) {
+    public void setLocationInfo(CountryInfoDto mLocationInfo) {
         this.mLocationInfo = mLocationInfo;
     }
 }

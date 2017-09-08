@@ -1,5 +1,6 @@
 package com.example.muresand.simpleweatherapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -156,7 +157,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_favorite_location3) {
 
         } else if (id == R.id.nav_settings) {
-
+            Intent settingsIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingsIntent);
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_help_about) {

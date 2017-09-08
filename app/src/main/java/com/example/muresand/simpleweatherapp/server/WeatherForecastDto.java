@@ -8,22 +8,22 @@ import java.util.ArrayList;
 
 public class WeatherForecastDto implements WeatherResponseMarker {
 
-    private LocationDto mLocation;
+    private CountryInfoDto mLocation;
     private ArrayList<CurrentWeatherDto> mWeatherForecastList;
 
     public WeatherForecastDto() {
     }
 
-    public WeatherForecastDto(LocationDto mLocation, ArrayList<CurrentWeatherDto> mWeatherForecastList) {
+    public WeatherForecastDto(CountryInfoDto mLocation, ArrayList<CurrentWeatherDto> mWeatherForecastList) {
         this.mLocation = mLocation;
         this.mWeatherForecastList = mWeatherForecastList;
     }
 
-    public LocationDto getLocation() {
+    public CountryInfoDto getLocation() {
         return mLocation;
     }
 
-    public void setLocation(LocationDto mLocation) {
+    public void setLocation(CountryInfoDto mLocation) {
         this.mLocation = mLocation;
     }
 

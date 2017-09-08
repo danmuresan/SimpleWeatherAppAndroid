@@ -19,4 +19,17 @@ public enum UnitOfMeasurement {
         return this.name;
     }
 
+    public static UnitOfMeasurement getEnumValueFromName(String name) {
+        if (name == "metric") {
+            return METRIC;
+        }
+        else if (name == "imperial") {
+            return IMPERIAL;
+        }
+        else if (name == "standard") {
+            return DEFAULT;
+        }
+
+        return METRIC;
+    }
 }
