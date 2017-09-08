@@ -240,35 +240,35 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // prepare for settings updates
             mAnimationsEnabledSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
-                public boolean onPreferenceChange(Preference preference, Object o) {
-                    currentSettings.setAnimationsEnabled(mAnimationsEnabledSwitch.isChecked());
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    currentSettings.setAnimationsEnabled((boolean)newValue);
                     return true;
                 }
             });
 
             mAutoDetectLocationSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
-                public boolean onPreferenceChange(Preference preference, Object o) {
-                    mManualLocationScreenPreference.setEnabled(mAutoDetectLocationSwitch.isChecked());
-                    currentSettings.setAutoDetectLocation(mAutoDetectLocationSwitch.isChecked());
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    mManualLocationScreenPreference.setEnabled(!(boolean)newValue);
+                    currentSettings.setAutoDetectLocation((boolean)newValue);
                     return true;
                 }
             });
 
             mUnitOfMeasurementListPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
-                public boolean onPreferenceChange(Preference preference, Object o) {
-                    mParentSettingsActivity.sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, o);
-                    currentSettings.setUnitOfMeasurement(getSelectedUnitOfMeasurementFromList());
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    mParentSettingsActivity.sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, newValue);
+                    currentSettings.setUnitOfMeasurement(getSelectedUnitOfMeasurementFromList((String) newValue));
                     return true;
                 }
             });
 
             mNumberOfDaysInForecastList.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
-                public boolean onPreferenceChange(Preference preference, Object o) {
-                    mParentSettingsActivity.sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, o);
-                    currentSettings.setNumberOfDaysInForecast(Integer.parseInt(mNumberOfDaysInForecastList.getValue()));
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    mParentSettingsActivity.sBindPreferenceSummaryToValueListener.onPreferenceChange(preference, newValue);
+                    currentSettings.setNumberOfDaysInForecast(Integer.parseInt((String) newValue));
                     return true;
                 }
             });
@@ -284,8 +284,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             return super.onOptionsItemSelected(item);
         }
 
-        private UnitOfMeasurement getSelectedUnitOfMeasurementFromList() {
-            int selectedValue = Integer.parseInt(mUnitOfMeasurementListPreference.getValue());
+        private UnitOfMeasurement getSelectedUnitOfMeasurementFromList(String newValue) {
+            int selectedValue = Integer.parseInt(newValue);
             switch (selectedValue) {
                 case -1:
                     return UnitOfMeasurement.METRIC;
@@ -293,9 +293,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     return UnitOfMeasurement.IMPERIAL;
                 case 1:
                     return UnitOfMeasurement.DEFAULT;
+                default:
+                    return UnitOfMeasurement.METRIC;
             }
-
-            return UnitOfMeasurement.METRIC;
         }
 
         private String setUnitOfMeasurementSelectedListValue(UnitOfMeasurement unitOfMeasurement) {
@@ -308,9 +308,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
                 case DEFAULT:
                     return "1";
-            }
 
-            return "-1";
+                default:
+                    return "-1";
+            }
         }
     }
 
