@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.muresand.simpleweatherapp">
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -24,6 +26,10 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"></activity>
+
+        <meta-data android:name="com.google.android.maps.v2.API_KEY"
+                android:value="AIzaSyA_SMTPAH6fO1drgajhKwxPUoPeChbCVUA" />
+
     </application>
 
 </manifest>

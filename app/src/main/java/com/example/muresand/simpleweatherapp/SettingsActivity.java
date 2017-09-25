@@ -2,7 +2,6 @@ package com.example.muresand.simpleweatherapp;
 
 
 import android.annotation.TargetApi;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -16,12 +15,12 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
-import android.support.annotation.IntegerRes;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 
 import com.example.muresand.simpleweatherapp.util.AppSettingsUtil;
@@ -320,7 +319,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_manual_location_selector);
+            //addPreferencesFromResource(R.xml.pref_manual_location_selector_old);
+            LayoutInflater inflater = (LayoutInflater) ((SettingsActivity) getActivity()).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            inflater.inflate(R.layout.pref_manual_location_selector, null);
             setHasOptionsMenu(false);
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences

@@ -1,20 +1,27 @@
 package com.example.muresand.simpleweatherapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.example.muresand.simpleweatherapp.server.CurrentWeatherDto;
@@ -34,15 +41,7 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private WeatherServiceManager mWeatherServiceManager;
-
-    private ProgressBar mainProgressSpinner;
-    private TextView mTemperatureTextView;
-    private TextView mCityTextView;
-    private TextView mWeatherDescriptionTextView;
-    private TextView mWeatherUpdatedDateTimeDescription;
-    private TextView mUnitOfMeasurementTextView;
-    private ImageView mWeatherIcon;
+    private TabLayout mainTabLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,56 +59,31 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        mWeatherServiceManager = new WeatherServiceManagerImpl();
-
         // get items
-        mainProgressSpinner = (ProgressBar) findViewById(R.id.mainProgressSpinner);
-        mCityTextView = (TextView) findViewById(R.id.cityTextView);
-        mTemperatureTextView = (TextView) findViewById(R.id.temperatureTextView);
-        mWeatherUpdatedDateTimeDescription = (TextView) findViewById(R.id.weatherUpdateDateTimeTextView);
-        mUnitOfMeasurementTextView = (TextView) findViewById(R.id.degreesTextView);
-        mWeatherDescriptionTextView = (TextView) findViewById(R.id.weatherDescriptionTextView);
-        mWeatherIcon = (ImageView) findViewById(R.id.weatherIcon);
+        mainTabLayout = (TabLayout) findViewById(R.id.mainTabLayout);
+        mainTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        // start up the spinner
-        mainProgressSpinner.setVisibility(View.VISIBLE);
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.mainPager);
+        final PagerAdapter adapter =  new MainContentPageAdapter(getSupportFragmentManager(), mainTabLayout.getTabCount());
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mainTabLayout));
 
-        try {
-            mWeatherServiceManager.getCurrentWeatherByCoordinates(46.771210, 23.623635, Constants.AppId, UnitOfMeasurement.METRIC.getName(), new WeatherApiResponseCallback<CurrentWeatherDto>() {
-                @Override
-                public void onSuccess(CurrentWeatherDto responseDto) {
+        mainTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
 
-                    WeatherDto weatherDescription = responseDto.getWeather().get(0);
-                    SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
 
-                    try {
-                        Date weatherUpdatedDate = dt.parse(new Date(responseDto.getDate() * 1000).toString());
-                        mWeatherUpdatedDateTimeDescription.setText(weatherUpdatedDate.toString());
-                    }
-                    catch (Exception ex) {
-                        Log.d("MAIN ACTIVITY", "Couldn't set weather updated date!");
-                    }
+            }
 
-                    mCityTextView.setText(responseDto.getLocationInfo().getCountry());
-                    mTemperatureTextView.setText(Double.toString(responseDto.getMainWeatherMetrics().getTempMain()) + (char) 0x00B0);
-                    mWeatherDescriptionTextView.setText(weatherDescription.getDescription());
-                    updateWeatherIcon(weatherDescription.getIcon());
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
 
-                    mainProgressSpinner.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onError(String message, int errorCode) {
-
-                    mCityTextView.setText(String.format("Network call failed with message: %s (code: %d)", message, errorCode));
-
-                    mainProgressSpinner.setVisibility(View.GONE);
-                }
-            });
-
-        } catch (Exception ex) {
-            Log.e("MAIN_ACTIVITY", ex.getMessage());
-        }
+            }
+        });
     }
 
     @Override
@@ -137,7 +111,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_refresh) {
+            //getWeatherDataByCoordinates(Constants.DEFAULT_LOCATION_LATITUDE, Constants.DEFAULT_LOCATION_LONGITUDE);
             return true;
         }
 
@@ -168,10 +143,5 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    private void updateWeatherIcon(String imageName) {
-        final String fullImageUrl = String.format(Constants.ImageForWeatherUri, imageName);
-        new DownloadImageAsyncTask((ImageView) findViewById(R.id.weatherIcon)).execute(fullImageUrl);
     }
 }

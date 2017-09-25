@@ -1,0 +1,100 @@
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.example.muresand.simpleweatherapp.MainActivity"
+    tools:showIn="@layout/app_bar_main">
+
+    <ProgressBar
+        android:id="@+id/mainProgressSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fetching weather data..."
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <GridLayout
+        android:id="@+id/mainTemperatureGridLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="20dp"
+        android:columnCount="3"
+        android:rowCount="2"
+        android:background="@drawable/main_weather_border"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <TextView
+            android:id="@+id/cityTextView"
+            android:text="Cluj-Napoca"
+            android:layout_column="0"
+            android:layout_columnSpan="2"
+            android:layout_margin="5dp"
+            android:layout_row="0"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/weatherIcon"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_column="2"
+            android:layout_marginLeft="25dp"
+            android:layout_row="0"
+            android:layout_rowSpan="2"
+            android:src="@drawable/ic_no_data" />
+
+        <TextView
+            android:id="@+id/temperatureTextView"
+            android:text="20"
+            android:layout_column="0"
+            android:layout_columnWeight="1"
+            android:layout_margin="5dp"
+            android:layout_row="1"
+            android:textSize="45sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/degreesTextView"
+            android:text="Celsius"
+            android:layout_column="1"
+            android:layout_columnWeight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_row="1"
+            android:textSize="20sp" />
+    </GridLayout>
+
+    <TextView
+        android:id="@+id/weatherDescriptionTextView"
+        app:layout_constraintTop_toBottomOf="@+id/mainTemperatureGridLayout"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:text="Broken Clouds"
+        android:textSize="25sp"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/weatherUpdateDateTimeTextView"
+        app:layout_constraintTop_toBottomOf="@+id/weatherDescriptionTextView"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="06/09/2017, 17:00"
+        android:textSize="15sp"
+        android:textAlignment="center" />
+
+</android.support.constraint.ConstraintLayout>

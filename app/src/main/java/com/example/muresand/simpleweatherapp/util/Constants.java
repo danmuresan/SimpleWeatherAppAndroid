@@ -27,6 +27,9 @@ public final class Constants {
     public static final String KEY_LATITUDE = "KeyLatitude";
     public static final String KEY_LONGITUDE = "KeyLongitude";
 
+    public static final double DEFAULT_LOCATION_LATITUDE = 46.771210;
+    public static final double DEFAULT_LOCATION_LONGITUDE = 23.623635;
+
     private Constants() {
     }
 }
