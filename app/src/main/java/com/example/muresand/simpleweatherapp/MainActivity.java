@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private TabLayout mainTabLayout;
+    private MainContentPageAdapter mPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +65,8 @@ public class MainActivity extends AppCompatActivity
         mainTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.mainPager);
-        final PagerAdapter adapter =  new MainContentPageAdapter(getSupportFragmentManager(), mainTabLayout.getTabCount());
-        viewPager.setAdapter(adapter);
+        mPagerAdapter = new MainContentPageAdapter(getSupportFragmentManager(), mainTabLayout.getTabCount());
+        viewPager.setAdapter(mPagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mainTabLayout));
 
         mainTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -113,6 +114,7 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
             //getWeatherDataByCoordinates(Constants.DEFAULT_LOCATION_LATITUDE, Constants.DEFAULT_LOCATION_LONGITUDE);
+            mPagerAdapter.refreshItemData(0);
             return true;
         }
 

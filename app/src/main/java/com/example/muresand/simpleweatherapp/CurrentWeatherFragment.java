@@ -12,11 +12,13 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.muresand.simpleweatherapp.server.CoordinatesDto;
 import com.example.muresand.simpleweatherapp.server.CurrentWeatherDto;
 import com.example.muresand.simpleweatherapp.server.WeatherApiResponseCallback;
 import com.example.muresand.simpleweatherapp.server.WeatherDto;
 import com.example.muresand.simpleweatherapp.server.WeatherServiceManager;
 import com.example.muresand.simpleweatherapp.server.WeatherServiceManagerImpl;
+import com.example.muresand.simpleweatherapp.util.AppSettingsUtil;
 import com.example.muresand.simpleweatherapp.util.Constants;
 import com.example.muresand.simpleweatherapp.util.DownloadImageAsyncTask;
 import com.example.muresand.simpleweatherapp.util.UnitOfMeasurement;
@@ -48,17 +50,29 @@ public class CurrentWeatherFragment extends Fragment {
         mWeatherDescriptionTextView = (TextView) currentView.findViewById(R.id.weatherDescriptionTextView);
         mWeatherIcon = (ImageView) currentView.findViewById(R.id.weatherIcon);
 
+        CoordinatesDto locationByCoords = AppSettingsUtil.loadLocationCoordinatesSettings(getContext());
+        if (locationByCoords == null || (locationByCoords.getLatitude() == 0 && locationByCoords.getLongitude() == 0))
+        {
+            locationByCoords = new CoordinatesDto(Constants.DEFAULT_LOCATION_LATITUDE, Constants.DEFAULT_LOCATION_LONGITUDE, "Cluj-Napoca");
+        }
+
         mWeatherServiceManager = new WeatherServiceManagerImpl();
-        getWeatherDataByCoordinates(Constants.DEFAULT_LOCATION_LATITUDE, Constants.DEFAULT_LOCATION_LONGITUDE);
+        getWeatherDataByCoordinates(locationByCoords.getLatitude(), locationByCoords.getLongitude(), locationByCoords.getCityName());
         return currentView;
     }
 
     public void refreshData() {
         // TODO: update
-        getWeatherDataByCoordinates(Constants.DEFAULT_LOCATION_LATITUDE, Constants.DEFAULT_LOCATION_LONGITUDE);
+        CoordinatesDto locationByCoords = AppSettingsUtil.loadLocationCoordinatesSettings(getContext());
+        if (locationByCoords == null || (locationByCoords.getLatitude() == 0 && locationByCoords.getLongitude() == 0))
+        {
+            locationByCoords = new CoordinatesDto(Constants.DEFAULT_LOCATION_LATITUDE, Constants.DEFAULT_LOCATION_LONGITUDE, "Cluj-Napoca");
+        }
+
+        getWeatherDataByCoordinates(locationByCoords.getLatitude(), locationByCoords.getLongitude(), locationByCoords.getCityName());
     }
 
-    private void getWeatherDataByCoordinates(double latitude, double longitude) {
+    private void getWeatherDataByCoordinates(double latitude, double longitude, final String cityName) {
 
         // start up the spinner
         mainProgressSpinner.setVisibility(View.VISIBLE);
@@ -78,7 +92,7 @@ public class CurrentWeatherFragment extends Fragment {
                         Log.d("MAIN ACTIVITY", "Couldn't set weather updated date!");
                     }
 
-                    mCityTextView.setText(responseDto.getLocationInfo().getCountry());
+                    mCityTextView.setText(cityName);
                     mTemperatureTextView.setText(Double.toString(responseDto.getMainWeatherMetrics().getTempMain()) + (char) 0x00B0);
                     mWeatherDescriptionTextView.setText(weatherDescription.getDescription());
                     updateWeatherIcon(weatherDescription.getIcon());

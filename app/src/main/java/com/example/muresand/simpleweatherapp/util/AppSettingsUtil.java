@@ -75,4 +75,26 @@ public class AppSettingsUtil {
 
         return settings;
     }
+
+    public static void saveLocationCoordinatesSettings(Context context, CoordinatesDto coordinatesData) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.AppName, Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPreferenceEditor = sharedPreferences.edit();
+
+        sharedPreferenceEditor.putString(KEY_CITY_NAME, coordinatesData.getCityName());
+        sharedPreferenceEditor.putLong(KEY_LATITUDE, Double.doubleToRawLongBits(coordinatesData.getLatitude()));
+        sharedPreferenceEditor.putLong(KEY_LONGITUDE, Double.doubleToRawLongBits(coordinatesData.getLongitude()));
+
+        sharedPreferenceEditor.commit();
+    }
+
+    public static CoordinatesDto loadLocationCoordinatesSettings(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.AppName, Context.MODE_PRIVATE);
+
+        String cityName = sharedPreferences.getString(KEY_CITY_NAME, "Unknown");
+        double latitude = Double.longBitsToDouble(sharedPreferences.getLong(KEY_LATITUDE, Double.doubleToLongBits(0)));
+        double longitude =  Double.longBitsToDouble(sharedPreferences.getLong(KEY_LONGITUDE, Double.doubleToLongBits(0)));
+        CoordinatesDto coords = new CoordinatesDto(latitude, longitude, cityName);
+
+        return coords;
+    }
 }
