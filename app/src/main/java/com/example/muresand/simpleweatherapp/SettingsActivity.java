@@ -15,6 +15,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -144,13 +145,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // save general settings
         if (mGeneralSettingsModel != null) {
             AppSettingsUtil.saveGeneralSettings(this, mGeneralSettingsModel);
+
+            Intent intent = new Intent("settings-changed-event");
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }
 
         super.onBackPressed();
-    }
-
-    private void saveGeneralSettings() {
-
     }
 
     /**

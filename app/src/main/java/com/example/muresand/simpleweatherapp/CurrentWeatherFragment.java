@@ -1,9 +1,13 @@
 package com.example.muresand.simpleweatherapp;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +25,7 @@ import com.example.muresand.simpleweatherapp.server.WeatherServiceManagerImpl;
 import com.example.muresand.simpleweatherapp.util.AppSettingsUtil;
 import com.example.muresand.simpleweatherapp.util.Constants;
 import com.example.muresand.simpleweatherapp.util.DownloadImageAsyncTask;
+import com.example.muresand.simpleweatherapp.util.GeneralSettingsModel;
 import com.example.muresand.simpleweatherapp.util.UnitOfMeasurement;
 
 import java.text.SimpleDateFormat;
@@ -29,6 +34,7 @@ import java.util.Date;
 public class CurrentWeatherFragment extends Fragment {
 
     private WeatherServiceManager mWeatherServiceManager;
+    private GeneralSettingsModel mGeneralSettings;
 
     private ProgressBar mainProgressSpinner;
     private TextView mTemperatureTextView;
@@ -50,6 +56,11 @@ public class CurrentWeatherFragment extends Fragment {
         mWeatherDescriptionTextView = (TextView) currentView.findViewById(R.id.weatherDescriptionTextView);
         mWeatherIcon = (ImageView) currentView.findViewById(R.id.weatherIcon);
 
+        // load settings and subscribe to settings changed events
+        mGeneralSettings = AppSettingsUtil.loadGeneralSettings(getContext());
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mSettingsChangedReceiver,
+                new IntentFilter("settings-changed-event"));
+
         CoordinatesDto locationByCoords = AppSettingsUtil.loadLocationCoordinatesSettings(getContext());
         if (locationByCoords == null || (locationByCoords.getLatitude() == 0 && locationByCoords.getLongitude() == 0))
         {
@@ -62,7 +73,8 @@ public class CurrentWeatherFragment extends Fragment {
     }
 
     public void refreshData() {
-        // TODO: update
+
+        mGeneralSettings = AppSettingsUtil.loadGeneralSettings(getContext());
         CoordinatesDto locationByCoords = AppSettingsUtil.loadLocationCoordinatesSettings(getContext());
         if (locationByCoords == null || (locationByCoords.getLatitude() == 0 && locationByCoords.getLongitude() == 0))
         {
@@ -72,13 +84,20 @@ public class CurrentWeatherFragment extends Fragment {
         getWeatherDataByCoordinates(locationByCoords.getLatitude(), locationByCoords.getLongitude(), locationByCoords.getCityName());
     }
 
+    private BroadcastReceiver mSettingsChangedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            refreshData();
+        }
+    };
+
     private void getWeatherDataByCoordinates(double latitude, double longitude, final String cityName) {
 
         // start up the spinner
         mainProgressSpinner.setVisibility(View.VISIBLE);
 
         try {
-            mWeatherServiceManager.getCurrentWeatherByCoordinates(latitude, longitude, Constants.AppId, UnitOfMeasurement.METRIC.getName(), new WeatherApiResponseCallback<CurrentWeatherDto>() {
+            mWeatherServiceManager.getCurrentWeatherByCoordinates(latitude, longitude, Constants.AppId, mGeneralSettings.getUnitOfMeasurement().getName(), new WeatherApiResponseCallback<CurrentWeatherDto>() {
                 @Override
                 public void onSuccess(CurrentWeatherDto responseDto) {
 
@@ -95,6 +114,7 @@ public class CurrentWeatherFragment extends Fragment {
                     mCityTextView.setText(cityName);
                     mTemperatureTextView.setText(Double.toString(responseDto.getMainWeatherMetrics().getTempMain()) + (char) 0x00B0);
                     mWeatherDescriptionTextView.setText(weatherDescription.getDescription());
+                    mUnitOfMeasurementTextView.setText(mGeneralSettings.getUnitOfMeasurement().getAppropriateDegreeUnit());
                     updateWeatherIcon(weatherDescription.getIcon());
 
                     mainProgressSpinner.setVisibility(View.GONE);

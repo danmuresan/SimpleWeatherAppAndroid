@@ -6,27 +6,34 @@ package com.example.muresand.simpleweatherapp.util;
 
 public enum UnitOfMeasurement {
 
-    METRIC ("metric"),
-    IMPERIAL ("imperial"),
-    DEFAULT ("standard");
+    METRIC ("metric", "Celsius"),
+    IMPERIAL ("imperial", "Fahrenheit"),
+    DEFAULT ("standard", "Celsius");
 
     private String name;
-    UnitOfMeasurement(String name) {
+    private String degreeUnit;
+
+    UnitOfMeasurement(String name, String degreeUnit) {
         this.name = name;
+        this.degreeUnit = degreeUnit;
     }
 
     public String getName() {
         return this.name;
     }
 
+    public String getAppropriateDegreeUnit() {
+        return this.degreeUnit;
+    }
+
     public static UnitOfMeasurement getEnumValueFromName(String name) {
-        if (name == "metric") {
+        if (name.equals("metric")) {
             return METRIC;
         }
-        else if (name == "imperial") {
+        else if (name.equals("imperial")) {
             return IMPERIAL;
         }
-        else if (name == "standard") {
+        else if (name.equals("standard")) {
             return DEFAULT;
         }
 
