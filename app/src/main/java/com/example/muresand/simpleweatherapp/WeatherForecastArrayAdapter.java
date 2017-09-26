@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.muresand.simpleweatherapp.util.AnimationsUtil;
 import com.example.muresand.simpleweatherapp.util.Constants;
 import com.example.muresand.simpleweatherapp.util.DownloadImageAsyncTask;
 import com.example.muresand.simpleweatherapp.util.WeatherItemModel;
@@ -23,11 +24,14 @@ public class WeatherForecastArrayAdapter extends ArrayAdapter<WeatherItemModel> 
     private final Context mContext;
     private final ArrayList<WeatherItemModel> mWeatherItemList;
 
-    public WeatherForecastArrayAdapter(Context context, ArrayList<WeatherItemModel> itemsList) {
+    private boolean mAnimationsEnabled;
+
+    public WeatherForecastArrayAdapter(Context context, ArrayList<WeatherItemModel> itemsList, boolean animationsEnabled) {
         super(context, R.layout.weather_forecast_row, itemsList);
 
         mContext = context;
         mWeatherItemList = itemsList;
+        mAnimationsEnabled = animationsEnabled;
     }
 
     @Override
@@ -53,8 +57,12 @@ public class WeatherForecastArrayAdapter extends ArrayAdapter<WeatherItemModel> 
         return rowView;
     }
 
-    private void updateWeatherIcon(String imageUri, ImageView weatherIcon) {
+    private  void updateWeatherIcon(String imageUri, ImageView weatherIcon) {
         final String fullImageUrl = String.format(Constants.ImageForWeatherUri, imageUri);
         new DownloadImageAsyncTask(weatherIcon).execute(fullImageUrl);
+
+        if (mAnimationsEnabled) {
+            AnimationsUtil.animateImageViewWithRotation(weatherIcon, 360f);
+        }
     }
 }

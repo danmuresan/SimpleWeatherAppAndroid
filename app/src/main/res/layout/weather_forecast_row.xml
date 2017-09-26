@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/weatherForecastRowImageView"
-        android:layout_height="50dp"
-        android:layout_width="50dp"
+        android:layout_height="60dp"
+        android:layout_width="60dp"
         android:layout_row="0"
         android:layout_rowSpan="2"
         android:layout_column="0"

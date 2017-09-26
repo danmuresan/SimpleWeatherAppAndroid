@@ -22,6 +22,7 @@ import com.example.muresand.simpleweatherapp.server.WeatherApiResponseCallback;
 import com.example.muresand.simpleweatherapp.server.WeatherDto;
 import com.example.muresand.simpleweatherapp.server.WeatherServiceManager;
 import com.example.muresand.simpleweatherapp.server.WeatherServiceManagerImpl;
+import com.example.muresand.simpleweatherapp.util.AnimationsUtil;
 import com.example.muresand.simpleweatherapp.util.AppSettingsUtil;
 import com.example.muresand.simpleweatherapp.util.Constants;
 import com.example.muresand.simpleweatherapp.util.DownloadImageAsyncTask;
@@ -124,5 +125,10 @@ public class CurrentWeatherFragment extends WeatherRetrievingFragmentBase {
     private void updateWeatherIcon(String imageName) {
         final String fullImageUrl = String.format(Constants.ImageForWeatherUri, imageName);
         new DownloadImageAsyncTask(mWeatherIcon).execute(fullImageUrl);
+
+        if (mGeneralSettings.isAnimationsEnabled())
+        {
+            AnimationsUtil.animateImageViewByScaling(mWeatherIcon, 1.0f);
+        }
     }
 }

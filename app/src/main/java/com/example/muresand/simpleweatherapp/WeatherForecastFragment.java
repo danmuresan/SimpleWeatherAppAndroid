@@ -84,7 +84,7 @@ public class WeatherForecastFragment extends WeatherRetrievingFragmentBase {
                         weatherItemList.add(listItem);
                     }
 
-                    mWeatherForecastArrayAdapter = new WeatherForecastArrayAdapter(getContext(), weatherItemList);
+                    mWeatherForecastArrayAdapter = new WeatherForecastArrayAdapter(getContext(), weatherItemList, mGeneralSettings.isAnimationsEnabled());
                     mWeatherForecastListView.setAdapter(mWeatherForecastArrayAdapter);
                 }
 
