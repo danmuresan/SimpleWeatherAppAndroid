@@ -1,0 +1,38 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.muresand.simpleweatherapp.WeatherForecastFragment">
+
+    <ProgressBar
+        android:id="@+id/forecastProgressSpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:text="Fetching weather data..." />
+
+    <TextView
+        android:id="@+id/forecastHeaderTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:layout_margin="10dp"
+        android:gravity="top"
+        android:padding="10dp"
+        android:textSize="25dp"
+        android:background="@drawable/bottom_border"
+        android:textStyle="bold"
+        android:text="Daily Forecast" />
+
+
+    <ListView
+        android:id="@+id/weatherForecastListView"
+        android:layout_below="@+id/forecastHeaderTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/bottom_border"/>
+
+</RelativeLayout>

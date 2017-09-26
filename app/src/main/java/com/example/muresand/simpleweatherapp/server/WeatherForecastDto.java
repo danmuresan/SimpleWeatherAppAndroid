@@ -1,5 +1,7 @@
 package com.example.muresand.simpleweatherapp.server;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 /**
@@ -8,30 +10,44 @@ import java.util.ArrayList;
 
 public class WeatherForecastDto implements WeatherResponseMarker {
 
-    private CountryInfoDto mLocation;
-    private ArrayList<CurrentWeatherDto> mWeatherForecastList;
+    @SerializedName("city")
+    private CityInfoDto mLocation;
+
+    @SerializedName("cnt")
+    private int mDaysCount;
+
+    @SerializedName("list")
+    private ArrayList<WeatherForecastItemDto> mWeatherForecastItemsList;
 
     public WeatherForecastDto() {
     }
 
-    public WeatherForecastDto(CountryInfoDto mLocation, ArrayList<CurrentWeatherDto> mWeatherForecastList) {
+    public WeatherForecastDto(CityInfoDto mLocation, ArrayList<WeatherForecastItemDto> mWeatherForecastList) {
         this.mLocation = mLocation;
-        this.mWeatherForecastList = mWeatherForecastList;
+        this.mWeatherForecastItemsList = mWeatherForecastList;
     }
 
-    public CountryInfoDto getLocation() {
+    public CityInfoDto getLocation() {
         return mLocation;
     }
 
-    public void setLocation(CountryInfoDto mLocation) {
+    public void setLocation(CityInfoDto mLocation) {
         this.mLocation = mLocation;
     }
 
-    public ArrayList<CurrentWeatherDto> getWeatherForecastList() {
-        return mWeatherForecastList;
+    public ArrayList<WeatherForecastItemDto> getWeatherForecastList() {
+        return mWeatherForecastItemsList;
     }
 
-    public void setWeatherForecastList(ArrayList<CurrentWeatherDto> mWeatherForecastList) {
-        this.mWeatherForecastList = mWeatherForecastList;
+    public void setWeatherForecastList(ArrayList<WeatherForecastItemDto> mWeatherForecastList) {
+        this.mWeatherForecastItemsList = mWeatherForecastList;
+    }
+
+    public int getDaysCount() {
+        return mDaysCount;
+    }
+
+    public void setDaysCount(int mDaysCount) {
+        this.mDaysCount = mDaysCount;
     }
 }

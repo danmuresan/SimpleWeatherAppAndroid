@@ -13,6 +13,7 @@ public class MainContentPageAdapter extends FragmentStatePagerAdapter {
     private int mNumOfTabs;
     private CurrentWeatherFragment mCurrentWeatherFragment;
     private MapFragment mMapFragment;
+    private WeatherForecastFragment mWeatherForecastFragment;
 
     public MainContentPageAdapter(FragmentManager fm, int NumOfTabs) {
         super(fm);
@@ -31,8 +32,12 @@ public class MainContentPageAdapter extends FragmentStatePagerAdapter {
 
                 return mCurrentWeatherFragment;
             case 1:
-                //CurrentWeatherFragment currentWeatherTab = new CurrentWeatherFragment();
-                return new android.support.v4.app.Fragment();
+                if (mWeatherForecastFragment == null)
+                {
+                    mWeatherForecastFragment = new WeatherForecastFragment();
+                }
+
+                return mWeatherForecastFragment;
             case 2:
                 if (mMapFragment == null)
                 {
@@ -54,6 +59,8 @@ public class MainContentPageAdapter extends FragmentStatePagerAdapter {
         switch (position) {
             case 0:
                 mCurrentWeatherFragment.refreshData();
+            case 1:
+                mWeatherForecastFragment.refreshData();
         }
     }
 

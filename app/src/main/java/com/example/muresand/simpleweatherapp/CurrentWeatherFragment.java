@@ -31,10 +31,9 @@ import com.example.muresand.simpleweatherapp.util.UnitOfMeasurement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class CurrentWeatherFragment extends Fragment {
+public class CurrentWeatherFragment extends WeatherRetrievingFragmentBase {
 
     private WeatherServiceManager mWeatherServiceManager;
-    private GeneralSettingsModel mGeneralSettings;
 
     private ProgressBar mainProgressSpinner;
     private TextView mTemperatureTextView;
@@ -46,20 +45,16 @@ public class CurrentWeatherFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         View currentView = inflater.inflate(R.layout.fragment_current_weather, container, false);
 
-        mainProgressSpinner = (ProgressBar) currentView.findViewById(R.id.mainProgressSpinner);
-        mCityTextView = (TextView) currentView.findViewById(R.id.cityTextView);
-        mTemperatureTextView = (TextView) currentView.findViewById(R.id.temperatureTextView);
-        mWeatherUpdatedDateTimeDescription = (TextView) currentView.findViewById(R.id.weatherUpdateDateTimeTextView);
-        mUnitOfMeasurementTextView = (TextView) currentView.findViewById(R.id.degreesTextView);
-        mWeatherDescriptionTextView = (TextView) currentView.findViewById(R.id.weatherDescriptionTextView);
-        mWeatherIcon = (ImageView) currentView.findViewById(R.id.weatherIcon);
-
-        // load settings and subscribe to settings changed events
-        mGeneralSettings = AppSettingsUtil.loadGeneralSettings(getContext());
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mSettingsChangedReceiver,
-                new IntentFilter("settings-changed-event"));
+        mainProgressSpinner = currentView.findViewById(R.id.mainProgressSpinner);
+        mCityTextView = currentView.findViewById(R.id.cityTextView);
+        mTemperatureTextView = currentView.findViewById(R.id.temperatureTextView);
+        mWeatherUpdatedDateTimeDescription = currentView.findViewById(R.id.weatherUpdateDateTimeTextView);
+        mUnitOfMeasurementTextView = currentView.findViewById(R.id.degreesTextView);
+        mWeatherDescriptionTextView = currentView.findViewById(R.id.weatherDescriptionTextView);
+        mWeatherIcon = currentView.findViewById(R.id.weatherIcon);
 
         CoordinatesDto locationByCoords = AppSettingsUtil.loadLocationCoordinatesSettings(getContext());
         if (locationByCoords == null || (locationByCoords.getLatitude() == 0 && locationByCoords.getLongitude() == 0))
@@ -74,7 +69,7 @@ public class CurrentWeatherFragment extends Fragment {
 
     public void refreshData() {
 
-        mGeneralSettings = AppSettingsUtil.loadGeneralSettings(getContext());
+        super.refreshData();
         CoordinatesDto locationByCoords = AppSettingsUtil.loadLocationCoordinatesSettings(getContext());
         if (locationByCoords == null || (locationByCoords.getLatitude() == 0 && locationByCoords.getLongitude() == 0))
         {
@@ -83,13 +78,6 @@ public class CurrentWeatherFragment extends Fragment {
 
         getWeatherDataByCoordinates(locationByCoords.getLatitude(), locationByCoords.getLongitude(), locationByCoords.getCityName());
     }
-
-    private BroadcastReceiver mSettingsChangedReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            refreshData();
-        }
-    };
 
     private void getWeatherDataByCoordinates(double latitude, double longitude, final String cityName) {
 
@@ -106,12 +94,12 @@ public class CurrentWeatherFragment extends Fragment {
 
                     try {
                         Date weatherUpdatedDate = new Date(responseDto.getDate() * 1000);
-                        mWeatherUpdatedDateTimeDescription.setText(weatherUpdatedDate.toString());
+                        mWeatherUpdatedDateTimeDescription.setText(dt.format(weatherUpdatedDate));
                     } catch (Exception ex) {
                         Log.d("MAIN ACTIVITY", "Couldn't set weather updated date!");
                     }
 
-                    mCityTextView.setText(cityName);
+                    mCityTextView.setText(cityName + ", " + responseDto.getLocationInfo().getCountry());
                     mTemperatureTextView.setText(Double.toString(responseDto.getMainWeatherMetrics().getTempMain()) + (char) 0x00B0);
                     mWeatherDescriptionTextView.setText(weatherDescription.getDescription());
                     mUnitOfMeasurementTextView.setText(mGeneralSettings.getUnitOfMeasurement().getAppropriateDegreeUnit());

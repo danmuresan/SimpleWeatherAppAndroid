@@ -29,6 +29,7 @@ public final class Constants {
 
     public static final double DEFAULT_LOCATION_LATITUDE = 46.771210;
     public static final double DEFAULT_LOCATION_LONGITUDE = 23.623635;
+    public static final int DEFAULT_CITY_ID = 681291;
 
     private Constants() {
     }
