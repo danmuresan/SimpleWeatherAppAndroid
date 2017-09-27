@@ -60,4 +60,9 @@ public class ManualLocationSelectionListAdapter extends ArrayAdapter<LocationMod
 
         return 0;
     }
+
+    @Override
+    public LocationModel getItem(int pos) {
+        return mLocationsList.get(pos);
+    }
 }

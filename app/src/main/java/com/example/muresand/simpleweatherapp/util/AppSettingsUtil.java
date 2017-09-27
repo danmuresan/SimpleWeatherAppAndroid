@@ -33,6 +33,7 @@ public class AppSettingsUtil {
         sharedPreferenceEditor.putBoolean(KEY_ANIMATIONS_ENABLED, generalSettingsModel.isAnimationsEnabled());
         sharedPreferenceEditor.putInt(KEY_NUMBER_OF_DAYS_IN_FORECAST, generalSettingsModel.getNumberOfDaysInForecast());
 
+        /*
         // check and save inner location related settings
         LocationModel locationData = generalSettingsModel.getLocationModel();
         if (locationData != null) {
@@ -47,6 +48,7 @@ public class AppSettingsUtil {
                 sharedPreferenceEditor.putLong(KEY_LONGITUDE, Double.doubleToRawLongBits(coordinatesData.getLongitude()));
             }
         }
+        */
 
         // save all changes
         sharedPreferenceEditor.commit();
@@ -80,7 +82,6 @@ public class AppSettingsUtil {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.AppName, Context.MODE_PRIVATE);
         SharedPreferences.Editor sharedPreferenceEditor = sharedPreferences.edit();
 
-        sharedPreferenceEditor.putString(KEY_CITY_NAME, coordinatesData.getCityName());
         sharedPreferenceEditor.putLong(KEY_LATITUDE, Double.doubleToRawLongBits(coordinatesData.getLatitude()));
         sharedPreferenceEditor.putLong(KEY_LONGITUDE, Double.doubleToRawLongBits(coordinatesData.getLongitude()));
 
@@ -90,11 +91,44 @@ public class AppSettingsUtil {
     public static CoordinatesDto loadLocationCoordinatesSettings(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.AppName, Context.MODE_PRIVATE);
 
-        String cityName = sharedPreferences.getString(KEY_CITY_NAME, "Unknown");
         double latitude = Double.longBitsToDouble(sharedPreferences.getLong(KEY_LATITUDE, Double.doubleToLongBits(0)));
         double longitude =  Double.longBitsToDouble(sharedPreferences.getLong(KEY_LONGITUDE, Double.doubleToLongBits(0)));
-        CoordinatesDto coords = new CoordinatesDto(latitude, longitude, cityName);
+        CoordinatesDto coords = new CoordinatesDto(latitude, longitude);
 
         return coords;
+    }
+
+    public static void saveLocationSettings(Context context, LocationModel locationModel) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.AppName, Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedPreferenceEditor = sharedPreferences.edit();
+
+        sharedPreferenceEditor.putString(KEY_CITY_NAME, locationModel.getCity());
+        sharedPreferenceEditor.putLong(KEY_CITY_ID, locationModel.getCityId());
+        sharedPreferenceEditor.putString(KEY_COUNTRY_NAME, locationModel.getCountry());
+
+        // check and save coords if necessary
+        CoordinatesDto coordinatesData = locationModel.getCoordinates();
+        if (coordinatesData != null) {
+            sharedPreferenceEditor.putLong(KEY_LATITUDE, Double.doubleToRawLongBits(coordinatesData.getLatitude()));
+            sharedPreferenceEditor.putLong(KEY_LONGITUDE, Double.doubleToRawLongBits(coordinatesData.getLongitude()));
+        }
+
+        sharedPreferenceEditor.commit();
+    }
+
+    public static LocationModel loadLocationSettings(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.AppName, Context.MODE_PRIVATE);
+
+        // get coordinates data
+        double latitude = Double.longBitsToDouble(sharedPreferences.getLong(KEY_LATITUDE, Double.doubleToLongBits(0)));
+        double longitude =  Double.longBitsToDouble(sharedPreferences.getLong(KEY_LONGITUDE, Double.doubleToLongBits(0)));
+        CoordinatesDto coords = new CoordinatesDto(latitude, longitude);
+
+        // get location data
+        String cityName = sharedPreferences.getString(KEY_CITY_NAME, "");
+        String countryName = sharedPreferences.getString(KEY_COUNTRY_NAME, "");
+        long cityId = sharedPreferences.getLong(KEY_CITY_ID, 0);
+
+        return new LocationModel(coords, cityId, cityName, countryName);
     }
 }

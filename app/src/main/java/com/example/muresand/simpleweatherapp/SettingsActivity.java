@@ -2,6 +2,7 @@ package com.example.muresand.simpleweatherapp;
 
 
 import android.annotation.TargetApi;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -26,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
@@ -246,6 +248,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 mAnimationsEnabledSwitch.setChecked(currentSettings.isAnimationsEnabled());
                 mUnitOfMeasurementListPreference.setValue(setUnitOfMeasurementSelectedListValue(currentSettings.getUnitOfMeasurement()));
                 mNumberOfDaysInForecastList.setValue(Integer.toString(currentSettings.getNumberOfDaysInForecast()));
+                mManualLocationScreenPreference.setSummary(String.format("%s, %s", currentSettings.getLocationModel().getCity(), currentSettings.getLocationModel().getCountry()));
             }
 
             // prepare for settings updates
@@ -283,6 +286,15 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     return true;
                 }
             });
+
+            getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+                @Override
+                public void onBackStackChanged() {
+                    LocationModel locationModel = AppSettingsUtil.loadLocationSettings(getContext());
+                    mManualLocationScreenPreference.setSummary(String.format("%s, %s", locationModel.getCity(), locationModel.getCountry()));
+                }
+            });
+
         }
 
         @Override
@@ -336,6 +348,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         private ManualLocationSelectionListAdapter mLocationSelectorArrayAdapter;
         private ArrayList<LocationModel> mInitialLocationsList;
+        private LocationModel mSelectedLocation;
 
         private class FileParsingAsyncTask extends AsyncTask<Context, Void, ArrayList<LocationModel>> {
 
@@ -373,6 +386,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
 
             setHasOptionsMenu(false);
+            mSelectedLocation = AppSettingsUtil.loadLocationSettings(getContext());
         }
 
         @Override
@@ -382,30 +396,47 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             mProgressSpinner = currentView.findViewById(R.id.cityListProgressSpinner);
             mCityListErrorTextView = currentView.findViewById(R.id.cityListErrorTextView);
             mLocationSelectorSearchView = currentView.findViewById(R.id.locationSelectorSearchView);
-            mLocationSelectorSearchView.setOnSearchClickListener(new View.OnClickListener() {
+            mLocationSelectorSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
                 @Override
-                public void onClick(View view) {
+                public boolean onQueryTextSubmit(String query) {
 
                     ArrayList<LocationModel> queriedList = new ArrayList<LocationModel>();
                     if (mLocationSelectorArrayAdapter == null || mLocationSelectorArrayAdapter.getLocationsList() == null) {
-                        return;
-                    }
-
-                    String query = mLocationSelectorSearchView.getQuery().toString();
-                    if (query == null || query.equals(""))
-                    {
-                        mLocationSelectorArrayAdapter.setLocationsList(mInitialLocationsList);
-                        mLocationSelectorArrayAdapter.notifyDataSetChanged();
+                        return false;
                     }
 
                     for (LocationModel location : mLocationSelectorArrayAdapter.getLocationsList()) {
-                        if (StringUtils.containsIgnoreCase(location.getCity(), query))
-                        {
+                        if (StringUtils.containsIgnoreCase(location.getCity(), query)) {
                             queriedList.add(location);
                         }
                     }
 
                     mLocationSelectorArrayAdapter.setLocationsList(queriedList);
+                    mLocationSelectorArrayAdapter.notifyDataSetChanged();
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+
+                    if (newText == null || newText.equals("")) {
+                        mLocationSelectorArrayAdapter.setLocationsList(mInitialLocationsList);
+                        mLocationSelectorArrayAdapter.notifyDataSetChanged();
+                    }
+
+                    return false;
+                }
+
+            });
+
+            mLocationSelectorListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    int pos = adapterView.getPositionForView(view);
+                    mSelectedLocation = mLocationSelectorArrayAdapter.getItem(pos);
+                    AppSettingsUtil.saveLocationSettings(getContext(), mSelectedLocation);
+                    getFragmentManager().popBackStackImmediate();
                 }
             });
 

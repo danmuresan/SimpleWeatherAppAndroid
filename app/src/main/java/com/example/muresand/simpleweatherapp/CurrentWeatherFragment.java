@@ -27,6 +27,7 @@ import com.example.muresand.simpleweatherapp.util.AppSettingsUtil;
 import com.example.muresand.simpleweatherapp.util.Constants;
 import com.example.muresand.simpleweatherapp.util.DownloadImageAsyncTask;
 import com.example.muresand.simpleweatherapp.util.GeneralSettingsModel;
+import com.example.muresand.simpleweatherapp.util.LocationModel;
 import com.example.muresand.simpleweatherapp.util.UnitOfMeasurement;
 
 import java.text.SimpleDateFormat;
@@ -57,14 +58,17 @@ public class CurrentWeatherFragment extends WeatherRetrievingFragmentBase {
         mWeatherDescriptionTextView = currentView.findViewById(R.id.weatherDescriptionTextView);
         mWeatherIcon = currentView.findViewById(R.id.weatherIcon);
 
-        CoordinatesDto locationByCoords = AppSettingsUtil.loadLocationCoordinatesSettings(getContext());
-        if (locationByCoords == null || (locationByCoords.getLatitude() == 0 && locationByCoords.getLongitude() == 0))
+        LocationModel locationModel = AppSettingsUtil.loadLocationSettings(getContext());
+        if (locationModel == null || locationModel.getCoordinates() == null || (locationModel.getCoordinates().getLatitude() == 0 && locationModel.getCoordinates().getLongitude() == 0))
         {
-            locationByCoords = new CoordinatesDto(Constants.DEFAULT_LOCATION_LATITUDE, Constants.DEFAULT_LOCATION_LONGITUDE, "Cluj-Napoca");
+            locationModel = new LocationModel();
+            locationModel.setCoordinates(new CoordinatesDto(Constants.DEFAULT_LOCATION_LATITUDE, Constants.DEFAULT_LOCATION_LONGITUDE));
+            locationModel.setCity("Cluj-Napoca");
+            locationModel.setCountry("RO");
         }
 
         mWeatherServiceManager = new WeatherServiceManagerImpl();
-        getWeatherDataByCoordinates(locationByCoords.getLatitude(), locationByCoords.getLongitude(), locationByCoords.getCityName());
+        getWeatherData(locationModel);
         return currentView;
     }
 
@@ -72,16 +76,22 @@ public class CurrentWeatherFragment extends WeatherRetrievingFragmentBase {
     public void refreshData() {
 
         super.refreshData();
-        CoordinatesDto locationByCoords = AppSettingsUtil.loadLocationCoordinatesSettings(getContext());
-        if (locationByCoords == null || (locationByCoords.getLatitude() == 0 && locationByCoords.getLongitude() == 0))
+        LocationModel locationModel = AppSettingsUtil.loadLocationSettings(getContext());
+        if (locationModel == null || locationModel.getCoordinates() == null || (locationModel.getCoordinates().getLatitude() == 0 && locationModel.getCoordinates().getLongitude() == 0))
         {
-            locationByCoords = new CoordinatesDto(Constants.DEFAULT_LOCATION_LATITUDE, Constants.DEFAULT_LOCATION_LONGITUDE, "Cluj-Napoca");
+            locationModel = new LocationModel();
+            locationModel.setCoordinates(new CoordinatesDto(Constants.DEFAULT_LOCATION_LATITUDE, Constants.DEFAULT_LOCATION_LONGITUDE));
+            locationModel.setCity("Cluj-Napoca");
+            locationModel.setCountry("RO");
         }
 
-        getWeatherDataByCoordinates(locationByCoords.getLatitude(), locationByCoords.getLongitude(), locationByCoords.getCityName());
+        getWeatherData(locationModel);
     }
 
-    private void getWeatherDataByCoordinates(double latitude, double longitude, final String cityName) {
+    private void getWeatherData(final LocationModel locationModel) {
+
+        double latitude = locationModel.getCoordinates().getLatitude();
+        double longitude = locationModel.getCoordinates().getLongitude();
 
         // start up the spinner
         mainProgressSpinner.setVisibility(View.VISIBLE);
@@ -101,7 +111,7 @@ public class CurrentWeatherFragment extends WeatherRetrievingFragmentBase {
                         Log.d("MAIN ACTIVITY", "Couldn't set weather updated date!");
                     }
 
-                    mCityTextView.setText(cityName + ", " + responseDto.getLocationInfo().getCountry());
+                    mCityTextView.setText(locationModel.getCity() + ", " + responseDto.getLocationInfo().getCountry());
                     mTemperatureTextView.setText(Double.toString(responseDto.getMainWeatherMetrics().getTempMain()) + (char) 0x00B0);
                     mWeatherDescriptionTextView.setText(weatherDescription.getDescription());
                     mUnitOfMeasurementTextView.setText(mGeneralSettings.getUnitOfMeasurement().getAppropriateDegreeUnit());

@@ -2,6 +2,7 @@ package com.example.muresand.simpleweatherapp;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,7 @@ import android.widget.Toast;
 import com.example.muresand.simpleweatherapp.server.CoordinatesDto;
 import com.example.muresand.simpleweatherapp.util.AppSettingsUtil;
 import com.example.muresand.simpleweatherapp.util.Constants;
+import com.example.muresand.simpleweatherapp.util.LocationModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -115,9 +118,12 @@ public class MapFragment extends Fragment {
                         return;
                     }
 
-                    CoordinatesDto newLocationByCoords = new CoordinatesDto(mSelectedLocation.latitude, mSelectedLocation.longitude);
-                    newLocationByCoords.setCityName(getCityFromCoordinates(getContext(), newLocationByCoords.getLatitude(), newLocationByCoords.getLongitude()));
-                    AppSettingsUtil.saveLocationCoordinatesSettings(getContext(), newLocationByCoords);
+                    LocationModel newLocationByCoords = new LocationModel();
+                    newLocationByCoords.setCoordinates(new CoordinatesDto(mSelectedLocation.latitude, mSelectedLocation.longitude));
+                    newLocationByCoords.setCity(getCityFromCoordinates(getContext(), newLocationByCoords.getCoordinates().getLatitude(), newLocationByCoords.getCoordinates().getLongitude()));
+                    newLocationByCoords.setCountry(getCountryFromCoordinates(getContext(), newLocationByCoords.getCoordinates().getLatitude(), newLocationByCoords.getCoordinates().getLongitude()));
+
+                    AppSettingsUtil.saveLocationSettings(getContext(), newLocationByCoords);
                     Toast.makeText(getContext(), "Location saved successfully", Toast.LENGTH_SHORT).show();
                 }
                 catch (Exception e) {
@@ -183,6 +189,25 @@ public class MapFragment extends Fragment {
 
         if (addresses.size() > 0) {
             return addresses.get(0).getLocality();
+        }
+        else {
+            return "Unknown";
+        }
+    }
+
+    private static String getCountryFromCoordinates(Context context, double latitude, double longitude) {
+        Geocoder gcd = new Geocoder(context, Locale.getDefault());
+
+        List<Address> addresses;
+        try {
+            addresses = gcd.getFromLocation(latitude, longitude, 1);
+        }
+        catch (Exception ex) {
+            return "Unknown";
+        }
+
+        if (addresses.size() > 0) {
+            return addresses.get(0).getCountryCode();
         }
         else {
             return "Unknown";

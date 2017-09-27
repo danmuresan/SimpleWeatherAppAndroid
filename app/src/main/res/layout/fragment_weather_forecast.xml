@@ -14,6 +14,18 @@
         android:text="Fetching weather data..." />
 
     <TextView
+        android:id="@+id/forecastErrorTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:padding="10dp"
+        android:textColor="@color/colorAccent"
+        android:visibility="gone"
+        android:text="Either something went wrong with the server call, or the coordinate-based location selection (from map) doesn't yet support forecasts!" />
+
+    <TextView
         android:id="@+id/forecastHeaderTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

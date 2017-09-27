@@ -14,20 +14,12 @@ public class CoordinatesDto {
     @SerializedName("lon")
     private double mLongitude;
 
-    private String mCityName;
-
     public CoordinatesDto() {
     }
 
     public CoordinatesDto(double latitude, double longitude) {
         this.mLatitude = latitude;
         this.mLongitude = longitude;
-    }
-
-    public CoordinatesDto(double latitude, double longitude, String cityName) {
-        this.mLatitude = latitude;
-        this.mLongitude = longitude;
-        this.mCityName = cityName;
     }
 
     public double getLatitude() {
@@ -44,13 +36,5 @@ public class CoordinatesDto {
 
     public void setLongitude(double mLongitude) {
         this.mLongitude = mLongitude;
-    }
-
-    public String getCityName() {
-        return mCityName;
-    }
-
-    public void setCityName(String mCityName) {
-        this.mCityName = mCityName;
     }
 }

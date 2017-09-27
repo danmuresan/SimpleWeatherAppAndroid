@@ -10,13 +10,16 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.muresand.simpleweatherapp.server.CoordinatesDto;
 import com.example.muresand.simpleweatherapp.server.CurrentWeatherDto;
 import com.example.muresand.simpleweatherapp.server.WeatherApiResponseCallback;
 import com.example.muresand.simpleweatherapp.server.WeatherForecastDto;
 import com.example.muresand.simpleweatherapp.server.WeatherForecastItemDto;
 import com.example.muresand.simpleweatherapp.server.WeatherServiceManager;
 import com.example.muresand.simpleweatherapp.server.WeatherServiceManagerImpl;
+import com.example.muresand.simpleweatherapp.util.AppSettingsUtil;
 import com.example.muresand.simpleweatherapp.util.Constants;
+import com.example.muresand.simpleweatherapp.util.LocationModel;
 import com.example.muresand.simpleweatherapp.util.UnitOfMeasurement;
 import com.example.muresand.simpleweatherapp.util.WeatherItemModel;
 
@@ -35,6 +38,7 @@ public class WeatherForecastFragment extends WeatherRetrievingFragmentBase {
     private TextView mHeaderTextView;
     private WeatherServiceManager mWeatherServiceManager;
     private WeatherForecastArrayAdapter mWeatherForecastArrayAdapter;
+    private TextView mForecastErrorTextView;
 
     public WeatherForecastFragment() {
         // Required empty public constructor
@@ -51,15 +55,58 @@ public class WeatherForecastFragment extends WeatherRetrievingFragmentBase {
         mWeatherForecastListView = currentView.findViewById(R.id.weatherForecastListView);
         mForecastProgressSpinner = currentView.findViewById(R.id.forecastProgressSpinner);
         mHeaderTextView = currentView.findViewById(R.id.forecastHeaderTextView);
+        mForecastErrorTextView = currentView.findViewById(R.id.forecastErrorTextView);
 
-        getWeatherForecast(Constants.DEFAULT_CITY_ID, mGeneralSettings.getNumberOfDaysInForecast());
+        LocationModel locationModel = AppSettingsUtil.loadLocationSettings(getContext());
+        if (locationModel == null || locationModel.getCoordinates() == null || (locationModel.getCoordinates().getLatitude() == 0 && locationModel.getCoordinates().getLongitude() == 0))
+        {
+            locationModel = new LocationModel();
+            locationModel.setCoordinates(new CoordinatesDto(Constants.DEFAULT_LOCATION_LATITUDE, Constants.DEFAULT_LOCATION_LONGITUDE));
+            locationModel.setCity("Cluj-Napoca");
+            locationModel.setCountry("RO");
+            locationModel.setCityId(Constants.DEFAULT_CITY_ID);
+        }
+
+        // TODO: when choosing location from the map (coord-based, make forecast call coordinate based)
+        if (locationModel.getCityId() != 0) {
+            mWeatherForecastListView.setVisibility(View.VISIBLE);
+            mForecastErrorTextView.setVisibility(View.GONE);
+            getWeatherForecast(locationModel.getCityId(), mGeneralSettings.getNumberOfDaysInForecast());
+        }
+        else {
+            mWeatherForecastListView.setVisibility(View.GONE);
+            mForecastProgressSpinner.setVisibility(View.GONE);
+            mForecastErrorTextView.setVisibility(View.VISIBLE);
+        }
+
         return currentView;
     }
 
     @Override
     public void refreshData() {
         super.refreshData();
-        getWeatherForecast(Constants.DEFAULT_CITY_ID, mGeneralSettings.getNumberOfDaysInForecast());
+
+        LocationModel locationModel = AppSettingsUtil.loadLocationSettings(getContext());
+        if (locationModel == null || locationModel.getCoordinates() == null || (locationModel.getCoordinates().getLatitude() == 0 && locationModel.getCoordinates().getLongitude() == 0))
+        {
+            locationModel = new LocationModel();
+            locationModel.setCoordinates(new CoordinatesDto(Constants.DEFAULT_LOCATION_LATITUDE, Constants.DEFAULT_LOCATION_LONGITUDE));
+            locationModel.setCity("Cluj-Napoca");
+            locationModel.setCountry("RO");
+            locationModel.setCityId(Constants.DEFAULT_CITY_ID);
+        }
+
+        // TODO: when choosing location from the map (coord-based, make forecast call coordinate based)
+        if (locationModel.getCityId() != 0) {
+            mForecastErrorTextView.setVisibility(View.GONE);
+            mWeatherForecastListView.setVisibility(View.VISIBLE);
+            getWeatherForecast(locationModel.getCityId(), mGeneralSettings.getNumberOfDaysInForecast());
+        }
+        else {
+            mWeatherForecastListView.setVisibility(View.GONE);
+            mForecastProgressSpinner.setVisibility(View.GONE);
+            mForecastErrorTextView.setVisibility(View.VISIBLE);
+        }
     }
 
     private void getWeatherForecast(long cityId, int numberOfDays) {
@@ -97,6 +144,7 @@ public class WeatherForecastFragment extends WeatherRetrievingFragmentBase {
 
                 // TODO: show error label
                 mForecastProgressSpinner.setVisibility(View.GONE);
+                mForecastErrorTextView.setVisibility(View.VISIBLE);
             }
         });
     }
