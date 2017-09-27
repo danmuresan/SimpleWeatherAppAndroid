@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -23,10 +24,21 @@ import android.preference.RingtonePreference;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.example.muresand.simpleweatherapp.util.AppSettingsUtil;
+import com.example.muresand.simpleweatherapp.util.FileParser;
 import com.example.muresand.simpleweatherapp.util.GeneralSettingsModel;
+import com.example.muresand.simpleweatherapp.util.LocationModel;
+import com.example.muresand.simpleweatherapp.util.StringUtils;
 import com.example.muresand.simpleweatherapp.util.UnitOfMeasurement;
+
+import java.util.ArrayList;
 
 import java.util.List;
 
@@ -316,20 +328,93 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class ManualLocationSelectorPreferenceFragment extends PreferenceFragment {
+
+        private ListView mLocationSelectorListView;
+        private ProgressBar mProgressSpinner;
+        private TextView mCityListErrorTextView;
+        private SearchView mLocationSelectorSearchView;
+
+        private ManualLocationSelectionListAdapter mLocationSelectorArrayAdapter;
+        private ArrayList<LocationModel> mInitialLocationsList;
+
+        private class FileParsingAsyncTask extends AsyncTask<Context, Void, ArrayList<LocationModel>> {
+
+            @Override
+            protected ArrayList<LocationModel> doInBackground(Context... input) {
+                return FileParser.parseCityJsonArrayFromFile(input[0]);
+            }
+
+            @Override
+            protected void onPostExecute(ArrayList<LocationModel> result) {
+                super.onPostExecute(result);
+
+                mLocationSelectorArrayAdapter = new ManualLocationSelectionListAdapter(getContext(), result);
+                mLocationSelectorListView.setAdapter(mLocationSelectorArrayAdapter);
+
+                mProgressSpinner.setVisibility(View.GONE);
+
+                if (result == null) {
+                    mCityListErrorTextView.setVisibility(View.VISIBLE);
+                }
+
+                mInitialLocationsList = result;
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+                mProgressSpinner.setVisibility(View.VISIBLE);
+            }
+        }
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            //addPreferencesFromResource(R.xml.pref_manual_location_selector_old);
-            LayoutInflater inflater = (LayoutInflater) ((SettingsActivity) getActivity()).getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            inflater.inflate(R.layout.pref_manual_location_selector, null);
-            setHasOptionsMenu(false);
 
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            //bindPreferenceSummaryToValue(findPreference("example_text"));
-            //bindPreferenceSummaryToValue(findPreference("example_list"));
+            setHasOptionsMenu(false);
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View currentView = inflater.inflate(R.layout.pref_manual_location_selector, container, false);
+            mLocationSelectorListView = currentView.findViewById(R.id.locationSelectorListView);
+            mProgressSpinner = currentView.findViewById(R.id.cityListProgressSpinner);
+            mCityListErrorTextView = currentView.findViewById(R.id.cityListErrorTextView);
+            mLocationSelectorSearchView = currentView.findViewById(R.id.locationSelectorSearchView);
+            mLocationSelectorSearchView.setOnSearchClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    ArrayList<LocationModel> queriedList = new ArrayList<LocationModel>();
+                    if (mLocationSelectorArrayAdapter == null || mLocationSelectorArrayAdapter.getLocationsList() == null) {
+                        return;
+                    }
+
+                    String query = mLocationSelectorSearchView.getQuery().toString();
+                    if (query == null || query.equals(""))
+                    {
+                        mLocationSelectorArrayAdapter.setLocationsList(mInitialLocationsList);
+                        mLocationSelectorArrayAdapter.notifyDataSetChanged();
+                    }
+
+                    for (LocationModel location : mLocationSelectorArrayAdapter.getLocationsList()) {
+                        if (StringUtils.containsIgnoreCase(location.getCity(), query))
+                        {
+                            queriedList.add(location);
+                        }
+                    }
+
+                    mLocationSelectorArrayAdapter.setLocationsList(queriedList);
+                }
+            });
+
+            return currentView;
+        }
+
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            new FileParsingAsyncTask().execute(getContext());
         }
 
         @Override

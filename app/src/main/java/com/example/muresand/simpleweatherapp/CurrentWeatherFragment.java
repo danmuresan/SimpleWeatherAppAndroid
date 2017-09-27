@@ -68,6 +68,7 @@ public class CurrentWeatherFragment extends WeatherRetrievingFragmentBase {
         return currentView;
     }
 
+    @Override
     public void refreshData() {
 
         super.refreshData();

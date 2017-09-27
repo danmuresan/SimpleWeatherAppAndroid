@@ -56,6 +56,7 @@ public class WeatherForecastFragment extends WeatherRetrievingFragmentBase {
         return currentView;
     }
 
+    @Override
     public void refreshData() {
         super.refreshData();
         getWeatherForecast(Constants.DEFAULT_CITY_ID, mGeneralSettings.getNumberOfDaysInForecast());
