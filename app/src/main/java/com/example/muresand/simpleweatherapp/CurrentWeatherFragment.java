@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +32,8 @@ import com.example.muresand.simpleweatherapp.util.GeneralSettingsModel;
 import com.example.muresand.simpleweatherapp.util.LocationModel;
 import com.example.muresand.simpleweatherapp.util.UnitOfMeasurement;
 
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -44,6 +48,10 @@ public class CurrentWeatherFragment extends WeatherRetrievingFragmentBase {
     private TextView mWeatherUpdatedDateTimeDescription;
     private TextView mUnitOfMeasurementTextView;
     private ImageView mWeatherIcon;
+    private TextView mWeatherHumidityTextView;
+    private TextView mWeatherPressureTextView;
+    private TextView mMinTempTextView;
+    private TextView mMaxTempTextView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,6 +65,10 @@ public class CurrentWeatherFragment extends WeatherRetrievingFragmentBase {
         mUnitOfMeasurementTextView = currentView.findViewById(R.id.degreesTextView);
         mWeatherDescriptionTextView = currentView.findViewById(R.id.weatherDescriptionTextView);
         mWeatherIcon = currentView.findViewById(R.id.weatherIcon);
+        mWeatherHumidityTextView = currentView.findViewById(R.id.weatherHumidityPercentageTextView);
+        mWeatherPressureTextView = currentView.findViewById(R.id.weatherPressureTextView);
+        mMaxTempTextView = currentView.findViewById(R.id.weatherMaxTempTextView);
+        mMinTempTextView = currentView.findViewById(R.id.weatherMinTempTextView);
 
         LocationModel locationModel = AppSettingsUtil.loadLocationSettings(getContext());
         if (locationModel == null || locationModel.getCoordinates() == null || (locationModel.getCoordinates().getLatitude() == 0 && locationModel.getCoordinates().getLongitude() == 0))
@@ -112,10 +124,14 @@ public class CurrentWeatherFragment extends WeatherRetrievingFragmentBase {
                     }
 
                     mCityTextView.setText(locationModel.getCity() + ", " + responseDto.getLocationInfo().getCountry());
-                    mTemperatureTextView.setText(Double.toString(responseDto.getMainWeatherMetrics().getTempMain()) + (char) 0x00B0);
+                    mTemperatureTextView.setText(String.format("%.1f", responseDto.getMainWeatherMetrics().getTempMain()) + (char) 0x00B0);
                     mWeatherDescriptionTextView.setText(weatherDescription.getDescription());
                     mUnitOfMeasurementTextView.setText(mGeneralSettings.getUnitOfMeasurement().getAppropriateDegreeUnit());
                     updateWeatherIcon(weatherDescription.getIcon());
+                    mWeatherHumidityTextView.setText(formatStringWithHtmlTags(String.format("<b>Humidity:</b>  %d%%", responseDto.getMainWeatherMetrics().getHumidityPercentage())));
+                    mMinTempTextView.setText(formatStringWithHtmlTags(String.format("<b>Min Temp:</b>  %.1f", responseDto.getMainWeatherMetrics().getMinTemperature()) + (char) 0x00B0 + " " + mGeneralSettings.getUnitOfMeasurement().getAppropriateDegreeUnit()));
+                    mMaxTempTextView.setText(formatStringWithHtmlTags(String.format("<b>Max Temp:</b>  %.1f", responseDto.getMainWeatherMetrics().getMaxTemperature()) + (char) 0x00B0 + " " + mGeneralSettings.getUnitOfMeasurement().getAppropriateDegreeUnit()));
+                    mWeatherPressureTextView.setText(formatStringWithHtmlTags(String.format("<b>Pressure:</b> %.1f mbar", responseDto.getMainWeatherMetrics().getPressure())));
 
                     mainProgressSpinner.setVisibility(View.GONE);
                 }
@@ -131,6 +147,10 @@ public class CurrentWeatherFragment extends WeatherRetrievingFragmentBase {
         } catch (Exception ex) {
             Log.e("MAIN_ACTIVITY", ex.getMessage());
         }
+    }
+
+    private Spanned formatStringWithHtmlTags(String rawString) {
+        return Html.fromHtml(rawString);
     }
 
     private void updateWeatherIcon(String imageName) {

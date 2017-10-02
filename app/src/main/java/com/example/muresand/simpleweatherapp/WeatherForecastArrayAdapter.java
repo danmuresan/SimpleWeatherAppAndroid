@@ -46,7 +46,7 @@ public class WeatherForecastArrayAdapter extends ArrayAdapter<WeatherItemModel> 
         descriptionTextView.setText(currentItem.getDescription());
 
         TextView tempTextView = rowView.findViewById(R.id.weatherForecastRowTempTextView);
-        tempTextView.setText(Double.toString(currentItem.getDegrees()) + (char) 0x00B0 + " " + currentItem.getUnitOfMeasurement().getAppropriateDegreeUnit());
+        tempTextView.setText(String.format("%.1f", currentItem.getDegrees()) + (char) 0x00B0 + " " + currentItem.getUnitOfMeasurement().getAppropriateDegreeUnit());
 
         TextView dateTextView = rowView.findViewById(R.id.weatherForecastRowDateTextView);
         dateTextView.setText(currentItem.getDate());
