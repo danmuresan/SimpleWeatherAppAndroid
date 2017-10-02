@@ -28,23 +28,12 @@ public class WeatherRetrievingFragmentBase extends android.support.v4.app.Fragme
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         mGeneralSettings = AppSettingsUtil.loadGeneralSettings(getContext());
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mSettingsChangedReceiver,
-                new IntentFilter("settings-changed-event"));
-
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     public void refreshData() {
         mGeneralSettings = AppSettingsUtil.loadGeneralSettings(getContext());
     }
-
-    protected BroadcastReceiver mSettingsChangedReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            refreshData();
-        }
-    };
 
 }

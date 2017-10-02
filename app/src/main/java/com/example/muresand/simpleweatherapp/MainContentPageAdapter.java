@@ -64,4 +64,14 @@ public class MainContentPageAdapter extends FragmentStatePagerAdapter {
         }
     }
 
+    public void refreshAllItems() {
+        if (mCurrentWeatherFragment != null) {
+            mCurrentWeatherFragment.refreshData();
+        }
+
+        if (mWeatherForecastFragment != null) {
+            mWeatherForecastFragment.refreshData();
+        }
+    }
+
 }

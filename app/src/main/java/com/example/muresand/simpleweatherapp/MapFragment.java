@@ -124,6 +124,9 @@ public class MapFragment extends Fragment {
                     newLocationByCoords.setCountry(getCountryFromCoordinates(getContext(), newLocationByCoords.getCoordinates().getLatitude(), newLocationByCoords.getCoordinates().getLongitude()));
 
                     AppSettingsUtil.saveLocationSettings(getContext(), newLocationByCoords);
+                    Intent intent = new Intent("settings-changed-event");
+                    LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+
                     Toast.makeText(getContext(), "Location saved successfully", Toast.LENGTH_SHORT).show();
                 }
                 catch (Exception e) {

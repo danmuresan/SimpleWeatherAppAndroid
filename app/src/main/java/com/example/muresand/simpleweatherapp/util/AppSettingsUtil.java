@@ -23,7 +23,12 @@ public class AppSettingsUtil {
 
     private AppSettingsUtil() {}
 
-    public static void saveGeneralSettings(Context context, GeneralSettingsModel generalSettingsModel) {
+    public static boolean saveGeneralSettings(Context context, GeneralSettingsModel generalSettingsModel) {
+
+        if (context == null) {
+            return false;
+        }
+
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.AppName, Context.MODE_PRIVATE);
         SharedPreferences.Editor sharedPreferenceEditor = sharedPreferences.edit();
 
@@ -33,28 +38,17 @@ public class AppSettingsUtil {
         sharedPreferenceEditor.putBoolean(KEY_ANIMATIONS_ENABLED, generalSettingsModel.isAnimationsEnabled());
         sharedPreferenceEditor.putInt(KEY_NUMBER_OF_DAYS_IN_FORECAST, generalSettingsModel.getNumberOfDaysInForecast());
 
-        /*
-        // check and save inner location related settings
-        LocationModel locationData = generalSettingsModel.getLocationModel();
-        if (locationData != null) {
-            sharedPreferenceEditor.putString(KEY_CITY_NAME, locationData.getCity());
-            sharedPreferenceEditor.putLong(KEY_CITY_ID, locationData.getCityId());
-            sharedPreferenceEditor.putString(KEY_COUNTRY_NAME, locationData.getCountry());
-
-            // check and save coords if necessary
-            CoordinatesDto coordinatesData = locationData.getCoordinates();
-            if (coordinatesData != null) {
-                sharedPreferenceEditor.putLong(KEY_LATITUDE, Double.doubleToRawLongBits(coordinatesData.getLatitude()));
-                sharedPreferenceEditor.putLong(KEY_LONGITUDE, Double.doubleToRawLongBits(coordinatesData.getLongitude()));
-            }
-        }
-        */
-
         // save all changes
         sharedPreferenceEditor.commit();
+        return true;
     }
 
     public static GeneralSettingsModel loadGeneralSettings(Context context) {
+
+        if (context == null) {
+            return null;
+        }
+
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.AppName, Context.MODE_PRIVATE);
 
         // get coordinates data
@@ -78,7 +72,12 @@ public class AppSettingsUtil {
         return settings;
     }
 
-    public static void saveLocationCoordinatesSettings(Context context, CoordinatesDto coordinatesData) {
+    public static boolean saveLocationCoordinatesSettings(Context context, CoordinatesDto coordinatesData) {
+
+        if (context == null) {
+            return false;
+        }
+
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.AppName, Context.MODE_PRIVATE);
         SharedPreferences.Editor sharedPreferenceEditor = sharedPreferences.edit();
 
@@ -86,9 +85,15 @@ public class AppSettingsUtil {
         sharedPreferenceEditor.putLong(KEY_LONGITUDE, Double.doubleToRawLongBits(coordinatesData.getLongitude()));
 
         sharedPreferenceEditor.commit();
+        return true;
     }
 
     public static CoordinatesDto loadLocationCoordinatesSettings(Context context) {
+
+        if (context == null) {
+            return null;
+        }
+
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.AppName, Context.MODE_PRIVATE);
 
         double latitude = Double.longBitsToDouble(sharedPreferences.getLong(KEY_LATITUDE, Double.doubleToLongBits(0)));
@@ -98,7 +103,12 @@ public class AppSettingsUtil {
         return coords;
     }
 
-    public static void saveLocationSettings(Context context, LocationModel locationModel) {
+    public static boolean saveLocationSettings(Context context, LocationModel locationModel) {
+
+        if (context == null) {
+            return false;
+        }
+
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.AppName, Context.MODE_PRIVATE);
         SharedPreferences.Editor sharedPreferenceEditor = sharedPreferences.edit();
 
@@ -114,9 +124,15 @@ public class AppSettingsUtil {
         }
 
         sharedPreferenceEditor.commit();
+        return true;
     }
 
     public static LocationModel loadLocationSettings(Context context) {
+
+        if (context == null) {
+            return null;
+        }
+
         SharedPreferences sharedPreferences = context.getSharedPreferences(Constants.AppName, Context.MODE_PRIVATE);
 
         // get coordinates data

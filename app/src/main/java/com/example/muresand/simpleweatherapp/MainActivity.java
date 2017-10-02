@@ -1,11 +1,14 @@
 package com.example.muresand.simpleweatherapp;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -29,6 +32,7 @@ import com.example.muresand.simpleweatherapp.server.WeatherApiResponseCallback;
 import com.example.muresand.simpleweatherapp.server.WeatherDto;
 import com.example.muresand.simpleweatherapp.server.WeatherServiceManager;
 import com.example.muresand.simpleweatherapp.server.WeatherServiceManagerImpl;
+import com.example.muresand.simpleweatherapp.util.AppSettingsUtil;
 import com.example.muresand.simpleweatherapp.util.Constants;
 import com.example.muresand.simpleweatherapp.util.DownloadImageAsyncTask;
 import com.example.muresand.simpleweatherapp.util.UnitOfMeasurement;
@@ -69,6 +73,9 @@ public class MainActivity extends AppCompatActivity
         viewPager.setAdapter(mPagerAdapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mainTabLayout));
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(mSettingsChangedReceiver,
+                new IntentFilter("settings-changed-event"));
+
         mainTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -86,6 +93,13 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
+
+    private BroadcastReceiver mSettingsChangedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mPagerAdapter.refreshAllItems();
+        }
+    };
 
     @Override
     public void onBackPressed() {
