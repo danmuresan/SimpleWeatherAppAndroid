@@ -26,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.muresand.simpleweatherapp.server.CurrentWeatherDto;
 import com.example.muresand.simpleweatherapp.server.WeatherApiResponseCallback;
@@ -155,18 +156,19 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_favorite_location1) {
-            // Handle the camera action
+            Toast.makeText(this, "Feature not yet available. Stay tuned...", Toast.LENGTH_LONG).show();
         } else if (id == R.id.nav_favorite_location2) {
-
+            Toast.makeText(this, "Feature not yet available. Stay tuned...", Toast.LENGTH_LONG).show();
         } else if (id == R.id.nav_favorite_location3) {
-
+            Toast.makeText(this, "Feature not yet available. Stay tuned...", Toast.LENGTH_LONG).show();
         } else if (id == R.id.nav_settings) {
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivity(settingsIntent);
         } else if (id == R.id.nav_share) {
-
+            Toast.makeText(this, "Feature not yet available. Stay tuned...", Toast.LENGTH_LONG).show();
         } else if (id == R.id.nav_help_about) {
-
+            Intent intent = new Intent(this, HelpAboutActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

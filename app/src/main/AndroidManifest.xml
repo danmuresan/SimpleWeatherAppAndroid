@@ -25,11 +25,13 @@
         </activity>
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:label="@string/title_activity_settings" />
 
-        <meta-data android:name="com.google.android.maps.v2.API_KEY"
-                android:value="AIzaSyA_SMTPAH6fO1drgajhKwxPUoPeChbCVUA" />
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyA_SMTPAH6fO1drgajhKwxPUoPeChbCVUA" />
 
+        <activity android:name=".HelpAboutActivity"></activity>
     </application>
 
 </manifest>

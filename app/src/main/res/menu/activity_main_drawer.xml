@@ -6,15 +6,15 @@
         <!-- TODO: change icons to weather stuff -->
         <item
             android:id="@+id/nav_favorite_location1"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_city"
             android:title="Cluj-Napoca" />
         <item
             android:id="@+id/nav_favorite_location2"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_city"
             android:title="Bucuresti" />
         <item
             android:id="@+id/nav_favorite_location3"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_city"
             android:title="New-York" />
 
     </group>
@@ -31,7 +31,7 @@
                 android:title="Share" />
             <item
                 android:id="@+id/nav_help_about"
-                android:icon="@drawable/ic_menu_slideshow"
+                android:icon="@drawable/ic_help"
                 android:title="Help and About" />
         </menu>
     </item>
