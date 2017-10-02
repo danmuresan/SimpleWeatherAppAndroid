@@ -22,6 +22,17 @@ public class CoordinatesDto {
         this.mLongitude = longitude;
     }
 
+    @Override
+    public boolean equals(Object otherObj) {
+
+        if (otherObj instanceof CoordinatesDto) {
+            CoordinatesDto other = (CoordinatesDto) otherObj;
+            return other.getLatitude() == mLatitude && other.getLongitude() == mLongitude;
+        }
+
+        return false;
+    }
+
     public double getLatitude() {
         return mLatitude;
     }

@@ -1,8 +1,10 @@
 package com.example.muresand.simpleweatherapp.util;
 
+import android.content.Context;
 import android.location.Location;
 
 import com.example.muresand.simpleweatherapp.server.CoordinatesDto;
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Created by muresand on 9/7/2017.
@@ -23,6 +25,41 @@ public class LocationModel {
         this.mCityId = mCityId;
         this.mCity = mCity;
         this.mCountry = mCountry;
+    }
+
+    public static LocationModel fromAndroidNativeLocation(Location nativeLocation, Context ctx) {
+        LocationModel newLocationByCoords = new LocationModel();
+        LatLng coords;
+        if (nativeLocation == null)
+        {
+            coords = new LatLng(Constants.DEFAULT_LOCATION_LATITUDE, Constants.DEFAULT_LOCATION_LONGITUDE);
+        }
+        else
+        {
+            coords = new LatLng(nativeLocation.getLatitude(), nativeLocation.getLongitude());
+        }
+
+
+        newLocationByCoords.setCoordinates(new CoordinatesDto(coords.latitude, coords.longitude));
+        newLocationByCoords.setCity(LocationHelper.getCityFromCoordinates(ctx, newLocationByCoords.getCoordinates().getLatitude(), newLocationByCoords.getCoordinates().getLongitude()));
+        newLocationByCoords.setCountry(LocationHelper.getCountryFromCoordinates(ctx, newLocationByCoords.getCoordinates().getLatitude(), newLocationByCoords.getCoordinates().getLongitude()));
+
+        // TODO: find city ID as well (if possible)
+
+        return newLocationByCoords;
+    }
+
+    @Override
+    public boolean equals(Object otherObj) {
+
+        if (otherObj instanceof LocationModel) {
+            LocationModel other = (LocationModel)otherObj;
+            return  other.getCountry().equals(mCountry) &&
+                    other.getCity().equals(mCity) &&
+                    other.getCoordinates().equals(mCoordinates);
+        }
+
+        return false;
     }
 
     public CoordinatesDto getCoordinates() {

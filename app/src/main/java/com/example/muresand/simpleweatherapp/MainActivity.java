@@ -128,13 +128,18 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
             //getWeatherDataByCoordinates(Constants.DEFAULT_LOCATION_LATITUDE, Constants.DEFAULT_LOCATION_LONGITUDE);
-            if (mainTabLayout.getSelectedTabPosition() == 0)
-            {
+            if (mPagerAdapter == null) {
+                return false;
+            }
+
+            if (mainTabLayout.getSelectedTabPosition() == 0) {
                 mPagerAdapter.refreshItemData(0);
             }
-            else if (mainTabLayout.getSelectedTabPosition() == 1)
-            {
+            else if (mainTabLayout.getSelectedTabPosition() == 1) {
                 mPagerAdapter.refreshItemData(1);
+            }
+            else if (mainTabLayout.getSelectedTabPosition() == 2) {
+                mPagerAdapter.refreshItemData(2);
             }
 
             return true;

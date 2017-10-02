@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.example.muresand.simpleweatherapp.server.CoordinatesDto;
 import com.example.muresand.simpleweatherapp.util.AppSettingsUtil;
 import com.example.muresand.simpleweatherapp.util.Constants;
+import com.example.muresand.simpleweatherapp.util.LocationHelper;
 import com.example.muresand.simpleweatherapp.util.LocationModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -33,25 +34,21 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.List;
-import java.util.Locale;
-
-public class MapFragment extends Fragment {
+public class MapFragment extends WeatherRetrievingFragmentBase {
 
     private GoogleMap mGoogleMap;
     private MapView mMapView;
-    private LocationManager mLocationManager;
     private Button mapLocationSaveBtn;
     private LatLng mSelectedLocation;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         View currentView = inflater.inflate(R.layout.fragment_map, container, false);
 
         mMapView = (MapView) currentView.findViewById(R.id.mapView);
         mapLocationSaveBtn = (Button) currentView.findViewById(R.id.mapLocationSaveBtn);
         mMapView.onCreate(savedInstanceState);
-        mLocationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
 
         mMapView.onResume();
 
@@ -80,16 +77,7 @@ public class MapFragment extends Fragment {
                                     0);
                 }
 
-                LatLng lastKnownLocationCoords;
-                Location lastKnownLocation = getLastKnownBestLocation();
-                if (lastKnownLocation == null)
-                {
-                    lastKnownLocationCoords = new LatLng(Constants.DEFAULT_LOCATION_LATITUDE, Constants.DEFAULT_LOCATION_LONGITUDE);
-                }
-                else
-                {
-                    lastKnownLocationCoords = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-                }
+                LatLng lastKnownLocationCoords = getAppropriateLocationToZoomInto();
 
                 // zoom into last known location
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(lastKnownLocationCoords).zoom(12).build();
@@ -120,10 +108,14 @@ public class MapFragment extends Fragment {
 
                     LocationModel newLocationByCoords = new LocationModel();
                     newLocationByCoords.setCoordinates(new CoordinatesDto(mSelectedLocation.latitude, mSelectedLocation.longitude));
-                    newLocationByCoords.setCity(getCityFromCoordinates(getContext(), newLocationByCoords.getCoordinates().getLatitude(), newLocationByCoords.getCoordinates().getLongitude()));
-                    newLocationByCoords.setCountry(getCountryFromCoordinates(getContext(), newLocationByCoords.getCoordinates().getLatitude(), newLocationByCoords.getCoordinates().getLongitude()));
+                    newLocationByCoords.setCity(LocationHelper.getCityFromCoordinates(getContext(), newLocationByCoords.getCoordinates().getLatitude(), newLocationByCoords.getCoordinates().getLongitude()));
+                    newLocationByCoords.setCountry(LocationHelper.getCountryFromCoordinates(getContext(), newLocationByCoords.getCoordinates().getLatitude(), newLocationByCoords.getCoordinates().getLongitude()));
 
                     AppSettingsUtil.saveLocationSettings(getContext(), newLocationByCoords);
+
+                    mGeneralSettings.setAutoDetectLocation(false);
+                    AppSettingsUtil.saveGeneralSettings(getContext(), mGeneralSettings);
+
                     Intent intent = new Intent("settings-changed-event");
                     LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
 
@@ -137,6 +129,38 @@ public class MapFragment extends Fragment {
         });
 
         return currentView;
+    }
+
+    private LatLng getAppropriateLocationToZoomInto() {
+        LatLng lastKnownLocationCoords;
+        if (mGeneralSettings == null || mGeneralSettings.getLocationModel() == null || mGeneralSettings.isAutoDetectLocation()) {
+
+            Location lastKnownLocation = LocationHelper.getLastKnownBestLocation(getContext());
+            if (lastKnownLocation == null)
+            {
+                lastKnownLocationCoords = new LatLng(Constants.DEFAULT_LOCATION_LATITUDE, Constants.DEFAULT_LOCATION_LONGITUDE);
+            }
+            else
+            {
+                lastKnownLocationCoords = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+            }
+        }
+        else {
+            lastKnownLocationCoords = new LatLng(mGeneralSettings.getLocationModel().getCoordinates().getLatitude(), mGeneralSettings.getLocationModel().getCoordinates().getLongitude());
+        }
+
+        return lastKnownLocationCoords;
+    }
+
+    @Override
+    public void refreshData() {
+        super.refreshData();
+
+        LatLng lastKnownLocationCoords = getAppropriateLocationToZoomInto();
+
+        // zoom into last known location
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(lastKnownLocationCoords).zoom(12).build();
+        mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
     @Override
@@ -162,59 +186,4 @@ public class MapFragment extends Fragment {
         super.onLowMemory();
         mMapView.onLowMemory();
     }
-
-    private Location getLastKnownBestLocation() {
-        List<String> providers = mLocationManager.getProviders(true);
-        Location bestLocation = null;
-        for (String provider : providers) {
-            Location l = mLocationManager.getLastKnownLocation(provider);
-            if (l == null) {
-                continue;
-            }
-            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
-                // Found best last known location: %s", l);
-                bestLocation = l;
-            }
-        }
-        return bestLocation;
-    }
-
-    private static String getCityFromCoordinates(Context context, double latitude, double longitude) {
-        Geocoder gcd = new Geocoder(context, Locale.getDefault());
-
-        List<Address> addresses;
-        try {
-            addresses = gcd.getFromLocation(latitude, longitude, 1);
-        }
-        catch (Exception ex) {
-            return "Unknown";
-        }
-
-        if (addresses.size() > 0) {
-            return addresses.get(0).getLocality();
-        }
-        else {
-            return "Unknown";
-        }
-    }
-
-    private static String getCountryFromCoordinates(Context context, double latitude, double longitude) {
-        Geocoder gcd = new Geocoder(context, Locale.getDefault());
-
-        List<Address> addresses;
-        try {
-            addresses = gcd.getFromLocation(latitude, longitude, 1);
-        }
-        catch (Exception ex) {
-            return "Unknown";
-        }
-
-        if (addresses.size() > 0) {
-            return addresses.get(0).getCountryCode();
-        }
-        else {
-            return "Unknown";
-        }
-    }
-
 }

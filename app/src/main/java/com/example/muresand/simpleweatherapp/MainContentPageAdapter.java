@@ -58,9 +58,17 @@ public class MainContentPageAdapter extends FragmentStatePagerAdapter {
     public void refreshItemData(int position) {
         switch (position) {
             case 0:
-                mCurrentWeatherFragment.refreshData();
+                if (mCurrentWeatherFragment != null) {
+                    mCurrentWeatherFragment.refreshData();
+                }
             case 1:
-                mWeatherForecastFragment.refreshData();
+                if (mWeatherForecastFragment != null) {
+                    mWeatherForecastFragment.refreshData();
+                }
+            case 2:
+                if (mMapFragment != null) {
+                    mMapFragment.refreshData();
+                }
         }
     }
 
@@ -71,6 +79,10 @@ public class MainContentPageAdapter extends FragmentStatePagerAdapter {
 
         if (mWeatherForecastFragment != null) {
             mWeatherForecastFragment.refreshData();
+        }
+
+        if (mMapFragment != null) {
+            mMapFragment.refreshData();
         }
     }
 

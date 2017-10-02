@@ -3,6 +3,7 @@ package com.example.muresand.simpleweatherapp;
 
 import android.annotation.TargetApi;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -36,6 +37,7 @@ import android.widget.TextView;
 import com.example.muresand.simpleweatherapp.util.AppSettingsUtil;
 import com.example.muresand.simpleweatherapp.util.FileParser;
 import com.example.muresand.simpleweatherapp.util.GeneralSettingsModel;
+import com.example.muresand.simpleweatherapp.util.LocationHelper;
 import com.example.muresand.simpleweatherapp.util.LocationModel;
 import com.example.muresand.simpleweatherapp.util.StringUtils;
 import com.example.muresand.simpleweatherapp.util.UnitOfMeasurement;
@@ -119,6 +121,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     // TODO: make initial model + compare + save only if different on exiting
     private GeneralSettingsModel mGeneralSettingsModel;
+    private boolean mShouldSave;
 
     /**
      * Binds a preference's summary to its value. More specifically, when the
@@ -142,6 +145,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     }
 
+    public void updateSettingsChanged(boolean settingsWereChanged) {
+        if (mShouldSave != settingsWereChanged) {
+            mShouldSave = settingsWereChanged;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,18 +159,19 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         mGeneralSettingsModel = AppSettingsUtil.loadGeneralSettings(this);
     }
 
-
     /**
         Save data on leaving settings
      */
     @Override
     public void onBackPressed() {
         // save general settings
-        if (mGeneralSettingsModel != null) {
+        if (mGeneralSettingsModel != null && mShouldSave) {
             AppSettingsUtil.saveGeneralSettings(this, mGeneralSettingsModel);
 
             Intent intent = new Intent("settings-changed-event");
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
+            mShouldSave = false;
         }
 
         super.onBackPressed();
@@ -214,6 +224,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class GeneralPreferenceFragment extends PreferenceFragment {
 
+        private static final String TAG_FRAGMENT = "general_settings_fragment";
+
         private SwitchPreference mAutoDetectLocationSwitch;
         private PreferenceScreen mManualLocationScreenPreference;
         private ListPreference mUnitOfMeasurementListPreference;
@@ -235,11 +247,20 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
             mParentSettingsActivity = (SettingsActivity) getActivity();
 
+            /*
+            final FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.addToBackStack("general");
+            transaction.commit();
+*/
+
             mAutoDetectLocationSwitch = (SwitchPreference) findPreference("auto_detect_location_switch");
             mAnimationsEnabledSwitch = (SwitchPreference) findPreference("animations_enabled_switch");
             mManualLocationScreenPreference = (PreferenceScreen) findPreference("manual_location_selector_screen");
             mUnitOfMeasurementListPreference = (ListPreference) findPreference("unit_of_measurement_list");
             mNumberOfDaysInForecastList = (ListPreference) findPreference("number_of_days_forecast_list");
+
+            // TODO: check if settings really changed
+            mParentSettingsActivity.updateSettingsChanged(true);
 
             // set the current settings
             final GeneralSettingsModel currentSettings = mParentSettingsActivity.mGeneralSettingsModel;
@@ -248,7 +269,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 mAnimationsEnabledSwitch.setChecked(currentSettings.isAnimationsEnabled());
                 mUnitOfMeasurementListPreference.setValue(setUnitOfMeasurementSelectedListValue(currentSettings.getUnitOfMeasurement()));
                 mNumberOfDaysInForecastList.setValue(Integer.toString(currentSettings.getNumberOfDaysInForecast()));
-                mManualLocationScreenPreference.setSummary(String.format("%s, %s", currentSettings.getLocationModel().getCity(), currentSettings.getLocationModel().getCountry()));
+
+                if (currentSettings.isAutoDetectLocation()) {
+                    mManualLocationScreenPreference.setEnabled(false);
+                    LocationModel autoDetectedLocation = LocationModel.fromAndroidNativeLocation(LocationHelper.getLastKnownBestLocation(getContext()), getContext());
+                    mManualLocationScreenPreference.setSummary(String.format("%s, %s", autoDetectedLocation.getCity(), autoDetectedLocation.getCountry()));
+                    AppSettingsUtil.saveLocationSettings(getContext(), autoDetectedLocation);
+                }
+                else {
+                    LocationModel locationModel = AppSettingsUtil.loadLocationSettings(getContext());
+                    mManualLocationScreenPreference.setSummary(String.format("%s, %s", locationModel.getCity(), locationModel.getCountry()));
+                }
             }
 
             // prepare for settings updates
@@ -265,6 +296,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     mManualLocationScreenPreference.setEnabled(!(boolean)newValue);
                     currentSettings.setAutoDetectLocation((boolean)newValue);
+
+                    if (currentSettings.isAutoDetectLocation()) {
+                        mManualLocationScreenPreference.setEnabled(false);
+                        LocationModel autoDetectedLocation = LocationModel.fromAndroidNativeLocation(LocationHelper.getLastKnownBestLocation(getContext()), getContext());
+                        mManualLocationScreenPreference.setSummary(String.format("%s, %s", autoDetectedLocation.getCity(), autoDetectedLocation.getCountry()));
+                        AppSettingsUtil.saveLocationSettings(getContext(), autoDetectedLocation);
+                    }
+                    else {
+                        LocationModel locationModel = AppSettingsUtil.loadLocationSettings(getContext());
+                        mManualLocationScreenPreference.setSummary(String.format("%s, %s", locationModel.getCity(), locationModel.getCountry()));
+                    }
+
                     return true;
                 }
             });
@@ -294,7 +337,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     mManualLocationScreenPreference.setSummary(String.format("%s, %s", locationModel.getCity(), locationModel.getCountry()));
                 }
             });
-
         }
 
         @Override
