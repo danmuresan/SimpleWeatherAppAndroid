@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:height="50dp"
         android:text="Save Location"
-        android:background="@color/colorPrimaryDark"
+        android:background="@drawable/map_location_selector_btn"
         android:textColor="#FFFFFF"
         android:textColorHighlight="#777777"
         android:layout_alignParentBottom="true"

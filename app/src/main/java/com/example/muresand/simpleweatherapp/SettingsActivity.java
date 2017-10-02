@@ -363,7 +363,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
                 mLocationSelectorArrayAdapter = new ManualLocationSelectionListAdapter(getContext(), result);
                 mLocationSelectorListView.setAdapter(mLocationSelectorArrayAdapter);
-
                 mProgressSpinner.setVisibility(View.GONE);
 
                 if (result == null) {
@@ -406,7 +405,11 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         return false;
                     }
 
-                    for (LocationModel location : mLocationSelectorArrayAdapter.getLocationsList()) {
+                    if (mCityListErrorTextView.getVisibility() == View.VISIBLE) {
+                        mCityListErrorTextView.setVisibility(View.GONE);
+                    }
+
+                    for (LocationModel location : mInitialLocationsList) {
                         if (StringUtils.containsIgnoreCase(location.getCity(), query)) {
                             queriedList.add(location);
                         }
@@ -414,11 +417,21 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
                     mLocationSelectorArrayAdapter.setLocationsList(queriedList);
                     mLocationSelectorArrayAdapter.notifyDataSetChanged();
+
+                    if (queriedList.size() == 0) {
+                        mCityListErrorTextView.setText("No results found...");
+                        mCityListErrorTextView.setVisibility(View.VISIBLE);
+                    }
+
                     return false;
                 }
 
                 @Override
                 public boolean onQueryTextChange(String newText) {
+
+                    if (mCityListErrorTextView.getVisibility() == View.VISIBLE) {
+                        mCityListErrorTextView.setVisibility(View.GONE);
+                    }
 
                     if (newText == null || newText.equals("")) {
                         mLocationSelectorArrayAdapter.setLocationsList(mInitialLocationsList);
