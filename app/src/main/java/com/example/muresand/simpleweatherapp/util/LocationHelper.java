@@ -5,6 +5,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.util.Log;
 
 import java.util.List;
 import java.util.Locale;
@@ -20,25 +21,35 @@ public class LocationHelper {
 
     public static Location getLastKnownBestLocation(Context context) {
 
-        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-
-        if (locationManager == null) {
+        if (context == null) {
             return null;
         }
 
-        List<String> providers = locationManager.getProviders(true);
-        Location bestLocation = null;
-        for (String provider : providers) {
-            Location l = locationManager.getLastKnownLocation(provider);
-            if (l == null) {
-                continue;
+        try {
+            LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+            if (locationManager == null) {
+                return null;
             }
-            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
-                // Found best last known location: %s", l);
-                bestLocation = l;
+
+            List<String> providers = locationManager.getProviders(true);
+            Location bestLocation = null;
+            for (String provider : providers) {
+                Location l = locationManager.getLastKnownLocation(provider);
+                if (l == null) {
+                    continue;
+                }
+                if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                    // Found best last known location: %s", l);
+                    bestLocation = l;
+                }
             }
+            return bestLocation;
         }
-        return bestLocation;
+        catch (Exception e) {
+            Log.d("LOCATION_HELPER", e.getMessage());
+            return null;
+        }
     }
 
     public static String getCityFromCoordinates(Context context, double latitude, double longitude) {
